@@ -9,6 +9,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { PersonInformation } from './person-information.entity';
+import { Subscription } from 'src/admin-subscriptions/subscriptions/entities/subscription.entity';
+import { Subscriber } from 'src/admin-subscriptions/subscribers/entities/subscriber.entity';
 
 @Entity()
 export class Person extends Timestamped {
@@ -34,6 +36,12 @@ export class Person extends Timestamped {
     (personInformation) => personInformation.person,
   )
   personInformation: PersonInformation[];
+
+  @OneToMany(() => Subscription, (subscription) => subscription.person)
+  subscriptions: Subscription[];
+
+  @OneToMany(() => Subscriber, (subscriber) => subscriber.person)
+  subscriber: Subscriber[];
 
   @Column({
     type: 'boolean',
