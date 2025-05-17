@@ -8,9 +8,12 @@ import { AuthModule } from './auth/auth.module';
 import { EmailsModule } from './emails/emails.module';
 import { ExternalApisModule } from './external-apis/external-apis.module';
 import { AdminProgrammingModule } from './admin-programming/admin-programming.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { typeOrmConfig } from './config/typeorm.config';
 
 @Module({
   imports: [
+    TypeOrmModule.forRootAsync({ useFactory: typeOrmConfig }),
     CommonModule,
     AdminSubscriptionsModule,
     AdminPersonsModule,
