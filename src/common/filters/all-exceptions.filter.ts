@@ -39,17 +39,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
       message = [
         `El valor ingresado '${duplicateValue}' ya se encuentra registrado`,
       ];
-      error = 'Duplicate Record';
     }
-
-    console.log(exception);
 
     this.logger.error(`HTTP ${status} Error: ${JSON.stringify(message)}`);
 
     response.status(status).json({
+      status,
       message,
-      error,
-      statusCode: status,
     });
   }
 }
