@@ -11,6 +11,7 @@ import { AdminProgrammingModule } from './admin-programming/admin-programming.mo
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/typeorm.config';
 import { SeedsModule } from './seeds/seeds.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { SeedsModule } from './seeds/seeds.module';
     ExternalApisModule,
     AdminProgrammingModule,
     SeedsModule,
+    FilesModule,
   ],
   controllers: [],
   providers: [],
