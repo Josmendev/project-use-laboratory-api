@@ -1,6 +1,13 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Subscription } from './subscription.entity';
 import { Timestamped } from 'src/common/entities/timestamped.entity';
+import { ProgrammingSubscriptionDetail } from 'src/admin-programming/programming/entities/programming-subscription-detail.entity';
 
 @Entity()
 export class SubscriptionDetail extends Timestamped {
@@ -12,6 +19,13 @@ export class SubscriptionDetail extends Timestamped {
     (subscription) => subscription.subscriptionDetail,
   )
   subscription: Subscription;
+
+  @OneToMany(
+    () => ProgrammingSubscriptionDetail,
+    (programmingSubscriptionDetail) =>
+      programmingSubscriptionDetail.subscriptionDetail,
+  )
+  programmingSubscriptionDetail: ProgrammingSubscriptionDetail[];
 
   service: string;
 

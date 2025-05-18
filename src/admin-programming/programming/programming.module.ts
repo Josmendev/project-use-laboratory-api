@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ProgrammingService } from './programming.service';
 import { ProgrammingController } from './programming.controller';
+import { ProgrammingService } from './services/programming.service';
 
 @Module({
   controllers: [ProgrammingController],
