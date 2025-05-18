@@ -6,12 +6,14 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
 import { StatusSubscription } from '../enums/status-subscription.enum';
 import { SubscriptionsType } from 'src/admin-subscriptions/subscriptions-type/entities/subscriptions-type.entity';
 import { Parameter } from 'src/admin-subscriptions/parameters/entities/parameter.entity';
 import { Subscriber } from 'src/admin-subscriptions/subscribers/entities/subscriber.entity';
 import { SubscriptionDetail } from './subscriptionDetail.entity';
+import { SubscriptionsDesigneSetting } from '../../subscriptions-designe-settings/entities/subscriptions-designe-setting.entity';
 
 @Entity()
 export class Subscription extends Timestamped {
@@ -56,6 +58,12 @@ export class Subscription extends Timestamped {
     (subscriptionDetail) => subscriptionDetail.subscription,
   )
   subscriptionDetail: SubscriptionDetail[];
+
+  @OneToOne(
+    () => SubscriptionsDesigneSetting,
+    (subscriptionsDesigneSetting) => subscriptionsDesigneSetting.subscription,
+  )
+  subscriptionsDesigneSetting: SubscriptionsDesigneSetting;
 
   @Column({
     type: 'enum',
