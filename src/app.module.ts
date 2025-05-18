@@ -10,6 +10,7 @@ import { ExternalApisModule } from './external-apis/external-apis.module';
 import { AdminProgrammingModule } from './admin-programming/admin-programming.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/typeorm.config';
+import { SeedsModule } from './seeds/seeds.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { typeOrmConfig } from './config/typeorm.config';
     EmailsModule,
     ExternalApisModule,
     AdminProgrammingModule,
+    SeedsModule,
   ],
   controllers: [],
   providers: [],
