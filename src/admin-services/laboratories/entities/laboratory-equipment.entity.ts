@@ -1,7 +1,14 @@
-import { PrimaryGeneratedColumn, Column, Entity, ManyToOne } from 'typeorm';
+import {
+  PrimaryGeneratedColumn,
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { Laboratory } from './laboratory.entity';
 import { Timestamped } from 'src/common/entities/timestamped.entity';
 import { Equipment } from 'src/admin-services/equipment/entities/equipment.entity';
+import { ReservationLaboratoryEquipment } from 'src/reservations/entities/reservation-laboratory-equipment.entity';
 
 @Entity()
 export class LaboratoryEquipment extends Timestamped {
@@ -23,4 +30,11 @@ export class LaboratoryEquipment extends Timestamped {
 
   @ManyToOne(() => Equipment, (equipment) => equipment.laboratoryEquipment)
   equipment: Equipment;
+
+  @OneToMany(
+    () => ReservationLaboratoryEquipment,
+    (reservationLaboratoryEquipe) =>
+      reservationLaboratoryEquipe.laboratoryEquipment,
+  )
+  reservationLaboratoryEquipment: ReservationLaboratoryEquipment[];
 }

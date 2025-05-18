@@ -3,6 +3,7 @@ import { Subscription } from 'src/admin-subscriptions/subscriptions/entities/sub
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { SubscriberRole } from './subscriber-role.entity';
 import { Timestamped } from 'src/common/entities/timestamped.entity';
+import { Reservation } from 'src/reservations/entities/reservation.entity';
 
 @Entity()
 export class Subscriber extends Timestamped {
@@ -61,6 +62,6 @@ export class Subscriber extends Timestamped {
   )
   subscriberRoles: SubscriberRole[];
 
-  // TODO: reservation relation
-  reservation: any;
+  @OneToMany(() => Reservation, (reservation) => reservation.subscriber)
+  reservation: Reservation;
 }
