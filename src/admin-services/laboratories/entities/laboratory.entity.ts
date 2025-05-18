@@ -4,9 +4,11 @@ import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { LaboratoryTechnicalSupport } from './laboratory-technical-support.entity';
 
 @Entity()
 export class Laboratory extends Timestamped {
@@ -23,6 +25,12 @@ export class Laboratory extends Timestamped {
   @OneToOne(() => Service, (service) => service.laboratory)
   @JoinColumn()
   service: Service;
+
+  @OneToMany(
+    () => LaboratoryTechnicalSupport,
+    (laboratoryTechnicalSupport) => laboratoryTechnicalSupport.laboratory,
+  )
+  laboratoryTechnicalSupport: LaboratoryTechnicalSupport[];
 
   @Column({
     type: 'integer',
