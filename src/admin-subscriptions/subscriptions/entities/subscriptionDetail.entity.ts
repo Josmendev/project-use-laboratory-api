@@ -8,6 +8,7 @@ import {
 import { Subscription } from './subscription.entity';
 import { Timestamped } from 'src/common/entities/timestamped.entity';
 import { ProgrammingSubscriptionDetail } from 'src/admin-programming/programming/entities/programming-subscription-detail.entity';
+import { Service } from 'src/admin-services/services/entities/service.entity';
 
 @Entity()
 export class SubscriptionDetail extends Timestamped {
@@ -27,7 +28,8 @@ export class SubscriptionDetail extends Timestamped {
   )
   programmingSubscriptionDetail: ProgrammingSubscriptionDetail[];
 
-  service: string;
+  @ManyToOne(() => Service, (service) => service.subscriptionDetail)
+  service: Service;
 
   @Column({
     type: 'integer',

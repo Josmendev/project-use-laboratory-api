@@ -2,9 +2,10 @@ import { SubscriptionDetail } from 'src/admin-subscriptions/subscriptions/entiti
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Programming } from './programming.entity';
 import { StatusProgramming } from '../enums/status-programming.enum';
+import { Timestamped } from 'src/common/entities/timestamped.entity';
 
 @Entity()
-export class ProgrammingSubscriptionDetail {
+export class ProgrammingSubscriptionDetail extends Timestamped {
   @PrimaryGeneratedColumn('uuid')
   programmingSubscriptionDetailId: string;
 

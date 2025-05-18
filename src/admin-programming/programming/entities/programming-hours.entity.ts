@@ -1,6 +1,10 @@
-import { Column, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ProgrammingDay } from './programming-day.entity';
-export class ProgrammingHours {
+import { Timestamped } from 'src/common/entities/timestamped.entity';
+
+@Entity()
+export class ProgrammingHours extends Timestamped {
+  @PrimaryGeneratedColumn('uuid')
   programmingHoursId: string;
 
   @ManyToOne(() => ProgrammingDay, (programmingDay) => programmingDay.hours)
@@ -8,17 +12,15 @@ export class ProgrammingHours {
 
   @Column({
     type: 'time',
-    length: 12,
     nullable: false,
   })
-  initialHour;
+  initialHour: string;
 
   @Column({
     type: 'time',
-    length: 12,
     nullable: false,
   })
-  finalHour;
+  finalHour: string;
 
   @Column({
     type: 'boolean',
