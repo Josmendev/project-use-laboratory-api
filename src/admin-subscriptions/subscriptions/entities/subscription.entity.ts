@@ -47,8 +47,8 @@ export class Subscription extends Timestamped {
   )
   subscriptionType: SubscriptionsType;
 
-  @OneToMany(() => Parameter, (parameter) => parameter.subscription)
-  parameters: Parameter[];
+  @OneToOne(() => Parameter, (parameter) => parameter.subscription)
+  parameters: Parameter;
 
   @OneToMany(() => Subscriber, (subscriber) => subscriber.subscription)
   subscriber: Subscriber[];

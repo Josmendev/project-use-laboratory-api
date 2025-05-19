@@ -1,9 +1,15 @@
-import { Person } from 'src/admin-persons/persons/entities/person.entity';
 import { Subscription } from 'src/admin-subscriptions/subscriptions/entities/subscription.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { SubscriberRole } from './subscriber-role.entity';
 import { Timestamped } from 'src/common/entities/timestamped.entity';
 import { Reservation } from 'src/reservations/entities/reservation.entity';
+import { NaturalPerson } from 'src/admin-persons/natural-persons/entities/natural-person.entity';
 
 @Entity()
 export class Subscriber extends Timestamped {
@@ -24,10 +30,10 @@ export class Subscriber extends Timestamped {
   })
   password: string;
 
-  @OneToMany(() => Person, (person) => person.subscriber)
-  person: Person;
+  @ManyToOne(() => NaturalPerson, (person) => person.subscriber)
+  naturalPerson: NaturalPerson;
 
-  @OneToMany(() => Subscription, (subscription) => subscription.subscriber)
+  @ManyToOne(() => Subscription, (subscription) => subscription.subscriber)
   subscription: Subscription;
 
   @Column({

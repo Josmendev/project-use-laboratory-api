@@ -1,13 +1,20 @@
 import { Subscription } from 'src/admin-subscriptions/subscriptions/entities/subscription.entity';
 import { Timestamped } from 'src/common/entities/timestamped.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Parameter extends Timestamped {
   @PrimaryGeneratedColumn('uuid')
   parameterId: string;
 
-  @ManyToOne(() => Subscription, (subscription) => subscription.parameters)
+  @OneToOne(() => Subscription, (subscription) => subscription.parameters)
+  @JoinColumn()
   subscription: Subscription;
 
   @Column({

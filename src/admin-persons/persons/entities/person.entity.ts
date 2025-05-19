@@ -4,18 +4,19 @@ import { Timestamped } from 'src/common/entities/timestamped.entity';
 import {
   Column,
   Entity,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { PersonInformation } from './person-information.entity';
 import { Subscription } from 'src/admin-subscriptions/subscriptions/entities/subscription.entity';
-import { Subscriber } from 'src/admin-subscriptions/subscribers/entities/subscriber.entity';
+import { DocumentIdentityType } from 'src/admin-persons/document-identity-type/entities/document-identity-type.entity';
 
 @Entity()
 export class Person extends Timestamped {
   @PrimaryGeneratedColumn('uuid')
-  idPerson: string;
+  personId: string;
 
   @Column({
     type: 'varchar',
@@ -24,6 +25,12 @@ export class Person extends Timestamped {
     unique: true,
   })
   documentNumber: string;
+
+  @ManyToOne(
+    () => DocumentIdentityType,
+    (documentIdentityType) => documentIdentityType.person,
+  )
+  documentIdentityType: DocumentIdentityType;
 
   @OneToOne(() => NaturalPerson, (person) => person.person)
   naturalPerson: NaturalPerson;
@@ -39,9 +46,6 @@ export class Person extends Timestamped {
 
   @OneToMany(() => Subscription, (subscription) => subscription.person)
   subscriptions: Subscription[];
-
-  @OneToMany(() => Subscriber, (subscriber) => subscriber.person)
-  subscriber: Subscriber[];
 
   @Column({
     type: 'boolean',
