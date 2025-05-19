@@ -1,9 +1,11 @@
 import { Person } from 'src/admin-persons/persons/entities/person.entity';
+import { Subscriber } from 'src/admin-subscriptions/subscribers/entities/subscriber.entity';
 import { Timestamped } from 'src/common/entities/timestamped.entity';
 import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -37,4 +39,7 @@ export class NaturalPerson extends Timestamped {
     nullable: false,
   })
   maternalSurname: string;
+
+  @OneToMany(() => Subscriber, (subscriber) => subscriber.naturalPerson)
+  subscriber: Subscriber[];
 }
