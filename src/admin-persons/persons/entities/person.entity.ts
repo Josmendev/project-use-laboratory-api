@@ -12,6 +12,7 @@ import {
 import { PersonInformation } from './person-information.entity';
 import { Subscription } from 'src/admin-subscriptions/subscriptions/entities/subscription.entity';
 import { DocumentIdentityType } from 'src/admin-persons/document-identity-type/entities/document-identity-type.entity';
+import { PersonsType } from 'src/admin-persons/persons-type/entities/persons-type.entity';
 
 @Entity()
 export class Person extends Timestamped {
@@ -31,6 +32,9 @@ export class Person extends Timestamped {
     (documentIdentityType) => documentIdentityType.person,
   )
   documentIdentityType: DocumentIdentityType;
+
+  @ManyToOne(() => PersonsType, (personType) => personType.person)
+  personType: PersonsType;
 
   @OneToOne(() => NaturalPerson, (person) => person.person)
   naturalPerson: NaturalPerson;

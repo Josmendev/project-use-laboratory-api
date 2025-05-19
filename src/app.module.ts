@@ -9,13 +9,22 @@ import { EmailsModule } from './emails/emails.module';
 import { ExternalApisModule } from './external-apis/external-apis.module';
 import { AdminProgrammingModule } from './admin-programming/admin-programming.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeOrmConfig } from './config/typeorm.config';
 import { SeedsModule } from './seeds/seeds.module';
 import { FilesModule } from './files/files.module';
+import { envs } from './config/envs.config';
 
 @Module({
   imports: [
-    TypeOrmModule.forRootAsync({ useFactory: typeOrmConfig }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: envs.db.host,
+      port: envs.db.port,
+      username: envs.db.username,
+      password: envs.db.password,
+      database: envs.db.database,
+      autoLoadEntities: true,
+      synchronize: envs.db.synchronize,
+    }),
     CommonModule,
     AdminSubscriptionsModule,
     AdminPersonsModule,

@@ -1,4 +1,4 @@
-import { PersonInformationResponseDto } from 'src/admin-persons/persons/entities/person-information-response.dto';
+import { PersonInformationResponseDto } from 'src/admin-persons/persons/dto/person-information-response.dto';
 
 export class NaturalPersonResponseDto {
   naturalPersonId: string;

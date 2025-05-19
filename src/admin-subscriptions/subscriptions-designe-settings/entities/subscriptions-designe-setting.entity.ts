@@ -30,9 +30,9 @@ export class SubscriptionsDesigneSetting extends Timestamped {
   @Column({
     type: 'varchar',
     length: 45,
-    nullable: false,
+    nullable: true,
   })
-  brandOne: string;
+  brandOne?: string;
 
   @Column({
     type: 'varchar',

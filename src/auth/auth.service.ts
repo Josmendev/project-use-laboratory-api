@@ -28,11 +28,14 @@ export class AuthService {
   ): Promise<LoginClientResponseDto> {
     const { username, url } = loginClientDto;
     const user = await this.subscribersService.findOneByUsername(username, url);
+    console.log(user);
+    if (user) console.log(user.subscription.status);
     if (!user || user.subscription.status !== StatusSubscription.ACTIVE)
       throw new NotFoundException(
         `No se encuentra el usuario con el nombre de usuario: ${username}`,
       );
     const token = this.getJwtToken({ id: user.subscriberId });
+    console.log(token);
     return {
       ...formatUserResponseForLogin(user),
       token,

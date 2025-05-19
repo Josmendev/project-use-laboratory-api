@@ -1,9 +1,10 @@
 import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Subscriber } from './subscriber.entity';
 import { Role } from 'src/admin-subscriptions/roles/entities/role.entity';
+import { Timestamped } from 'src/common/entities/timestamped.entity';
 
 @Entity()
-export class SubscriberRole {
+export class SubscriberRole extends Timestamped {
   @PrimaryGeneratedColumn('uuid')
   subscriberRoleId: string;
 

@@ -1,14 +1,15 @@
 import { Person } from 'src/admin-persons/persons/entities/person.entity';
+import { Timestamped } from 'src/common/entities/timestamped.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class DocumentIdentityType {
+export class DocumentIdentityType extends Timestamped {
   @PrimaryGeneratedColumn('uuid')
   documentIdentityTypeId: string;
 
   @Column({
     type: 'varchar',
-    length: 25,
+    length: 35,
     nullable: false,
   })
   description: string;

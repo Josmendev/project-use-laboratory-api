@@ -1,5 +1,6 @@
+import { Person } from 'src/admin-persons/persons/entities/person.entity';
 import { Timestamped } from 'src/common/entities/timestamped.entity';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class PersonsType extends Timestamped {
@@ -18,4 +19,7 @@ export class PersonsType extends Timestamped {
     default: true,
   })
   isActive: boolean;
+
+  @OneToMany(() => Person, (person) => person.personType)
+  person: Person[];
 }
