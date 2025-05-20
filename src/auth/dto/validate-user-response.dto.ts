@@ -12,6 +12,7 @@ export class ValidateUserResponseDto {
     initialDate: string;
     finalDate: string;
     parameter: ParameterResponseDto;
+    person: any;
   };
   role: string[];
 }

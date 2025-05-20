@@ -4,4 +4,5 @@ export class ParameterResponseDto {
   numberReservationDays: number;
   miniumNumberMinutes: number;
   rangeBeetweenReservations: number;
+  reservationTime: string[];
 }

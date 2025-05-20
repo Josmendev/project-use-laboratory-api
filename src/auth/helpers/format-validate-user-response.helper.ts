@@ -2,12 +2,21 @@ import { Subscriber } from 'src/admin-subscriptions/subscribers/entities/subscri
 import { ValidateUserResponseDto } from '../dto/validate-user-response.dto';
 import { NaturalPersonResponseDto } from 'src/admin-persons/natural-persons/dto/natural-person-response.dto';
 import { ParameterResponseDto } from 'src/admin-subscriptions/parameters/dto/parameter-response.dto';
+import { generateTimeSlots } from 'src/admin-subscriptions/parameters/helpers/generate-time-slots.helper';
 
 export const formatValidateUserResponse = (
   subscriber: Subscriber | null,
 ): ValidateUserResponseDto | null => {
   if (!subscriber) return null;
 
+  // 1. Datos base del suscriptor
+  const baseResponse = {
+    subscriberId: subscriber.subscriberId,
+    username: subscriber.username,
+    role: subscriber.subscriberRoles.map((role) => role.role.description),
+  };
+
+  // 2. Persona natural del SUSCRIPTOR (siempre carga)
   const naturalPersonResponse: NaturalPersonResponseDto = {
     naturalPersonId: subscriber.naturalPerson?.naturalPersonId,
     personId: subscriber.naturalPerson?.person?.personId,
@@ -24,6 +33,7 @@ export const formatValidateUserResponse = (
       })) || [],
   };
 
+  // 3. Parámetros de la suscripción
   const parameterResponse: ParameterResponseDto = {
     parameterId: subscriber.subscription?.parameters?.parameterId,
     description: subscriber.subscription?.parameters?.description,
@@ -33,11 +43,35 @@ export const formatValidateUserResponse = (
       subscriber.subscription?.parameters?.miniumNumberMinutes,
     rangeBeetweenReservations:
       subscriber.subscription?.parameters?.rangeBetweenReservations,
+    reservationTime: generateTimeSlots(
+      subscriber.subscription?.parameters?.miniumNumberMinutes,
+    ),
   };
 
+  // 4. Persona de la SUSCRIPCIÓN (condicional según joins)
+  const subscriptionPerson = subscriber.subscription?.person;
+  const subscriptionPersonResponse = {
+    personId: subscriptionPerson?.personId,
+    // Datos específicos según el tipo
+    ...(subscriptionPerson?.naturalPerson
+      ? {
+          fullName:
+            subscriptionPerson.naturalPerson.fullName +
+            ' ' +
+            subscriptionPerson.naturalPerson.paternalSurname +
+            ' ' +
+            subscriptionPerson.naturalPerson.maternalSurname,
+        }
+      : subscriptionPerson?.juridicalPerson
+        ? {
+            fullname: subscriptionPerson.juridicalPerson.comercialName,
+          }
+        : { type: 'unknown' }),
+  };
+
+  // 5. Construcción final
   const validateUserResponse: ValidateUserResponseDto = {
-    subscriberId: subscriber.subscriberId,
-    username: subscriber.username,
+    ...baseResponse,
     naturalPerson: naturalPersonResponse,
     subscription: {
       subscriptionId: subscriber.subscription?.subscriptionId,
@@ -45,8 +79,8 @@ export const formatValidateUserResponse = (
       initialDate: subscriber.subscription?.initialDate?.toISOString(),
       finalDate: subscriber.subscription?.finalDate?.toISOString(),
       parameter: parameterResponse,
+      person: subscriptionPersonResponse,
     },
-    role: subscriber.subscriberRoles.map((role) => role.role.description),
   };
 
   return validateUserResponse;

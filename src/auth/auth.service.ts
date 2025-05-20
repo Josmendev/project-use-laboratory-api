@@ -1,5 +1,4 @@
 import {
-  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -8,18 +7,17 @@ import { LoginClientDto } from './dto/login-client.dto';
 import { LoginClientResponseDto } from './dto/login-client-response.dto';
 import { SubscribersService } from 'src/admin-subscriptions/subscribers/services/subscribers.service';
 import { JwtPayloadDto } from './dto/jwt-payload.dto';
-import { TokenService } from 'src/common/interfaces/token-service.interface';
-import { TOKEN_SERVICE } from 'src/common/constants/constants';
 import { formatUserResponseForLogin } from './helpers/format-user-response-for-login';
 import { StatusSubscription } from 'src/admin-subscriptions/subscriptions/enums/status-subscription.enum';
 import { ValidateUserResponseDto } from './dto/validate-user-response.dto';
 import { formatValidateUserResponse } from './helpers/format-validate-user-response.helper';
+import { JwtAdapter } from 'src/common/adapters/jwt.adapter';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly subscribersService: SubscribersService,
-    @Inject(TOKEN_SERVICE) private readonly jwt: TokenService,
+    private readonly jwt: JwtAdapter,
   ) {}
   // Methods for endpoints
   // CLI
@@ -28,14 +26,11 @@ export class AuthService {
   ): Promise<LoginClientResponseDto> {
     const { username, url } = loginClientDto;
     const user = await this.subscribersService.findOneByUsername(username, url);
-    console.log(user);
-    if (user) console.log(user.subscription.status);
     if (!user || user.subscription.status !== StatusSubscription.ACTIVE)
       throw new NotFoundException(
         `No se encuentra el usuario con el nombre de usuario: ${username}`,
       );
     const token = this.getJwtToken({ id: user.subscriberId });
-    console.log(token);
     return {
       ...formatUserResponseForLogin(user),
       token,

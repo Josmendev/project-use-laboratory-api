@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
-import { JwtAdapter } from './adapters/jwt.adapter';
-import { TOKEN_SERVICE } from './constants/constants';
 import { JwtModule } from '@nestjs/jwt';
+import { BcryptAdapter } from './adapters/bcrypt.adapter';
 
 @Module({
   imports: [JwtModule],
-  providers: [{ provide: TOKEN_SERVICE, useClass: JwtAdapter }],
-  exports: [TOKEN_SERVICE],
+  providers: [BcryptAdapter],
+  exports: [BcryptAdapter],
 })
 export class CommonModule {}

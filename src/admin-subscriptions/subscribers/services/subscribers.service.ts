@@ -37,18 +37,38 @@ export class SubscribersService {
     const queryBuilder =
       this.subscriberRepository.createQueryBuilder('subscriber');
     queryBuilder
+      // subscriber relations
       .leftJoinAndSelect('subscriber.subscription', 'subscription')
-      .leftJoinAndSelect('subscriber.person', 'personSubscriber')
-      .leftJoinAndSelect('subscription.parameter', 'parameter')
-      .leftJoinAndSelect('subscription.person', 'personSubscription')
+      .leftJoinAndSelect('subscriber.naturalPerson', 'naturalPerson')
+      .leftJoinAndSelect('naturalPerson.person', 'subscriberPerson')
+      .leftJoinAndSelect(
+        'subscriberPerson.personInformation',
+        'personInformation',
+      )
+      .leftJoinAndSelect('personInformation.informationType', 'informationType')
+      // subscription relations
+      .leftJoinAndSelect('subscription.parameters', 'parameters')
+      .leftJoinAndSelect('subscription.person', 'person')
       .leftJoinAndSelect('person.documentIdentityType', 'documentIdentityType')
-      .leftJoinAndSelect('person.juridicalPerson', 'juridicalPerson')
-      .leftJoinAndSelect('person.informationPerson', 'informationPerson')
-      .leftJoinAndSelect('informationPerson.informationType', 'informationType')
-      .leftJoinAndSelect('subscriber.subscriberRole', 'subscriberRole')
-      .leftJoinAndSelect('subscriberRole.role', 'role')
+      .leftJoinAndSelect('person.personType', 'personType')
+      .leftJoinAndSelect(
+        'person.naturalPerson',
+        'naturalPersonSubscription',
+        'personType.description = :naturalTypeName',
+        { naturalTypeName: 'Persona natural' },
+      )
+      .leftJoinAndSelect(
+        'person.juridicalPerson',
+        'juridicalPerson',
+        'personType.description = :juridicalTypeName',
+        { juridicalTypeName: 'Persona jurídica' },
+      )
+      // roles
+      .leftJoinAndSelect('subscriber.subscriberRoles', 'subscriberRoles')
+      .leftJoinAndSelect('subscriberRoles.role', 'role')
       .where('subscriber.subscriberId = :subscriberId', { subscriberId });
     const subscriber = await queryBuilder.getOne();
+    console.log(subscriber);
     return subscriber;
   }
 }
