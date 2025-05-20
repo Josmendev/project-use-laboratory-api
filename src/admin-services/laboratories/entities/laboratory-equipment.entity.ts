@@ -15,11 +15,7 @@ export class LaboratoryEquipment extends Timestamped {
   @PrimaryGeneratedColumn('uuid')
   laboratoryEquipeId: string;
 
-  @Column({
-    type: 'varchar',
-    length: 25,
-    nullable: false,
-  })
+  @ManyToOne(() => Laboratory, (laboratory) => laboratory.laboratoryEquipment)
   laboratory: Laboratory;
 
   @Column({

@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { LaboratoryTechnicalSupport } from './laboratory-technical-support.entity';
+import { LaboratoryEquipment } from './laboratory-equipment.entity';
 
 @Entity()
 export class Laboratory extends Timestamped {
@@ -25,6 +26,12 @@ export class Laboratory extends Timestamped {
   @OneToOne(() => Service, (service) => service.laboratory)
   @JoinColumn()
   service: Service;
+
+  @OneToMany(
+    () => LaboratoryEquipment,
+    (laboratoryEquipment) => laboratoryEquipment.laboratory,
+  )
+  laboratoryEquipment: LaboratoryEquipment[];
 
   @OneToMany(
     () => LaboratoryTechnicalSupport,
