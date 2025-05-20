@@ -10,6 +10,12 @@ import { SubscriptionsType } from '../admin-subscriptions/subscriptions-type/ent
 import { DocumentIdentityType } from '../admin-persons/document-identity-type/entities/document-identity-type.entity';
 import { ServicesType } from '../admin-services/services-type/entities/services-type.entity';
 import { Service } from '../admin-services/services/entities/service.entity';
+import { AttributesType } from '../admin-services/attributes-type/entities/attributes-type.entity';
+import { Attribute } from '../admin-services/attributes/entities/attribute.entity';
+import { Equipment } from '../admin-services/equipment/entities/equipment.entity';
+import { EquipmentResources } from '../admin-services/equipment/entities/equipment-resources.entity';
+import { Laboratory } from '../admin-services/laboratories/entities/laboratory.entity';
+import { LaboratoryEquipment } from '../admin-services/laboratories/entities/laboratory-equipment.entity';
 
 @Module({
   imports: [
@@ -22,6 +28,12 @@ import { Service } from '../admin-services/services/entities/service.entity';
       DocumentIdentityType,
       ServicesType,
       Service,
+      AttributesType,
+      Attribute,
+      Equipment,
+      EquipmentResources,
+      Laboratory,
+      LaboratoryEquipment
     ]),
   ],
   controllers: [SeedsController],

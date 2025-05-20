@@ -1,8 +1,10 @@
 import { SeedData } from '../interfaces/seed-data.interface';
 import { Person } from '../../admin-persons/persons/entities/person.entity';
-import { ServicesType } from '../../admin-services/services-type/entities/services-type.entity';
 import { PersonsType } from '../../admin-persons/persons-type/entities/persons-type.entity';
+import { ServicesType } from '../../admin-services/services-type/entities/services-type.entity';
 import { DocumentIdentityType } from '../../admin-persons/document-identity-type/entities/document-identity-type.entity';
+import { AttributesType } from '../../admin-services/attributes-type/entities/attributes-type.entity';
+import { Service } from '../../admin-services/services/entities/service.entity';
 
 export const initialData: SeedData = {
   documentIdentityType: [
@@ -221,49 +223,27 @@ export const initialData: SeedData = {
   ],
   serviceTypes: [
     {
-      serviceTypeId: 'l4m5n6o7-0123-4567-89ij-klmn90123456',
-      description: 'Software Development',
-      isActive: true,
-    },
-    {
-      serviceTypeId: 'm5n6o7p8-1234-5678-90jk-lmno01234567',
-      description: 'IT Infrastructure',
-      isActive: true,
-    },
-    {
-      serviceTypeId: 'n6o7p8q9-2345-6789-01kl-mnop12345678',
-      description: 'Cybersecurity',
-      isActive: true,
-    },
-  ],
-  services: [
-    {
-      serviceId: 'o7p8q9r0-3456-7890-12lm-nopq23456789',
-      serviceType: new ServicesType(),
+      serviceTypeId: 'o7p8q9r0-3456-7890-12lm-nopq23456789',
       description: 'VDI Virtual Desktops',
       isActive: true,
     },
     {
-      serviceId: 'p8q9r0s1-4567-8901-23mn-opqr34567890',
-      serviceType: new ServicesType(),
+      serviceTypeId: 'p8q9r0s1-4567-8901-23mn-opqr34567890',
       description: 'Cloud Computing Solutions',
       isActive: true,
     },
     {
-      serviceId: 'q9r0s1t2-5678-9012-34no-pqrs45678901',
-      serviceType: new ServicesType(),
+      serviceTypeId: 'q9r0s1t2-5678-9012-34no-pqrs45678901',
       description: 'Network Infrastructure',
       isActive: true,
     },
     {
-      serviceId: 'r0s1t2u3-6789-0123-45op-qrst56789012',
-      serviceType: new ServicesType(),
+      serviceTypeId: 'r0s1t2u3-6789-0123-45op-qrst56789012',
       description: 'Data Backup and Recovery',
       isActive: true,
     },
     {
-      serviceId: 's1t2u3v4-7890-1234-56pq-rstu67890123',
-      serviceType: new ServicesType(),
+      serviceTypeId: 's1t2u3v4-7890-1234-56pq-rstu67890123',
       description: 'IT Security Services',
       isActive: true,
     },
@@ -292,6 +272,369 @@ export const initialData: SeedData = {
     {
       subscriptionTypeId: 'x6y7z8a9-2345-6789-01uv-wxyz12345678',
       description: 'Enterprise Plan',
+      isActive: true,
+    },
+  ],
+  attributeTypes: [
+    {
+      attributesTypeId: 'y7z8a9b0-3456-7890-12vw-xyza23456789',
+      description: 'Technical Specifications',
+      isActive: true,
+    },
+    {
+      attributesTypeId: 'z8a9b0c1-4567-8901-23wx-yzab34567890',
+      description: 'Hardware Components',
+      isActive: true,
+    },
+    {
+      attributesTypeId: 'a9b0c1d2-5678-9012-34xy-zabc45678901',
+      description: 'Performance Metrics',
+      isActive: true,
+    },
+    {
+      attributesTypeId: 'a9b0x1d2-6678-9512-34xy-zabc45678901',
+      description: 'Software',
+      isActive: true,
+    },
+  ],
+  attributes: [
+    {
+      attributeId: 'b0c1d2e3-6789-0123-45yz-abcd56789012',
+      description: 'RAM Memory',
+      attributesType: new AttributesType(),
+      isActive: true,
+    },
+    {
+      attributeId: 'c1d2e3f4-7890-1234-56za-bcde67890123',
+      attributesType: new AttributesType(),
+      description: 'Processor',
+      isActive: true,
+    },
+    {
+      attributeId: 'd2e3f4g5-8901-2345-67ab-cdef78901234',
+      attributesType: new AttributesType(),
+      description: 'Graphics Card',
+      isActive: true,
+    },
+    {
+      attributeId: 'e3f4g5h6-9012-3456-78bc-defg89012345',
+      attributesType: new AttributesType(),
+      description: 'Storage Drive',
+      isActive: true,
+    },
+    {
+      attributeId: 'f4g5h6i7-0123-4567-89cd-efgh90123456',
+      attributesType: new AttributesType(),
+      description: 'Motherboard',
+      isActive: true,
+    },
+    {
+      attributeId: 'g5h6i7j8-1234-5678-90de-fghi01234567',
+      attributesType: new AttributesType(),
+      description: 'Power Supply',
+      isActive: true,
+    },
+    {
+      attributeId: 'h6i7j8k9-2345-6789-01ef-ghij12345678',
+      attributesType: new AttributesType(),
+      description: 'Network Card',
+      isActive: true,
+    },
+    {
+      attributeId: 'i7j8k9l0-3456-7890-12fg-hijk23456789',
+      attributesType: new AttributesType(),
+      description: 'Operating System',
+      isActive: true,
+    },
+    {
+      attributeId: 'j8k9l0m1-4567-8901-23gh-ijkl34567890',
+      attributesType: new AttributesType(),
+      description: 'Monitor Resolution',
+      isActive: true,
+    },
+    {
+      attributeId: 'k9l0m1n2-5678-9012-34hi-jklm45678901',
+      attributesType: new AttributesType(),
+      description: 'CPU Cooling System',
+      isActive: true,
+    },
+    {
+      attributeId: 'l0m1n2o3-6789-0123-45ij-klmn56789012',
+      attributesType: new AttributesType(),
+      description: 'System BIOS',
+      isActive: true,
+    },
+    {
+      attributeId: 'm1n2o3p4-7890-1234-56jk-lmno67890123',
+      attributesType: new AttributesType(),
+      description: 'Sound Card',
+      isActive: true,
+    },
+    {
+      attributeId: 'n2o3p4q5-8901-2345-67kl-mnop78901234',
+      attributesType: new AttributesType(),
+      description: 'Case Type',
+      isActive: true,
+    },
+  ],
+  equipments: [
+    {
+      equipmentId: 'e1f2g3h4-9012-3456-78bc-defg89012345',
+      description: 'Core i3-12100 8GB PC',
+      isActive: true,
+    },
+    {
+      equipmentId: 'e2f3g4h5-0123-4567-89cd-efgh90123456',
+      description: 'Ryzen 5 5600X Desktop',
+      isActive: true,
+    },
+    {
+      equipmentId: 'e3f4g5h6-1234-5678-90de-fghi01234567',
+      description: 'Core i5-13600K 32GB',
+      isActive: true,
+    },
+    {
+      equipmentId: 'e4f5g6h7-2345-6789-01ef-ghij12345678',
+      description: 'Ryzen 7 7700X System',
+      isActive: true,
+    },
+    {
+      equipmentId: 'e5f6g7h8-3456-7890-12fg-hijk23456789',
+      description: 'Core i7-13700K Setup',
+      isActive: true,
+    },
+    {
+      equipmentId: 'e6f7g8h9-4567-8901-23gh-ijkl34567890',
+      description: 'Ryzen 9 7950X PC',
+      isActive: true,
+    },
+    {
+      equipmentId: 'e7f8g9h0-5678-9012-34hi-jklm45678901',
+      description: 'Core i9-13900K Rig',
+      isActive: true,
+    },
+
+    {
+      equipmentId: 'e8f9g0h1-6789-0123-45ij-klmn56789012',
+      description: 'Ryzen 3 4100 Basic',
+      isActive: true,
+    },
+    {
+      equipmentId: 'e9f0g1h2-7890-1234-56jk-lmno67890123',
+      description: 'Core i5-12400F Setup',
+      isActive: true,
+    },
+    {
+      equipmentId: 'e0f1g2h3-8901-2345-67kl-mnop78901234',
+      description: 'Ryzen 5 7600X Build',
+      isActive: true,
+    },
+    {
+      equipmentId: 'e1f2g3h4-9901-2345-67kl-mnop78901235',
+      description: 'Core i7 Workstation',
+      isActive: true,
+    },
+    {
+      equipmentId: 'e2f3g4h5-0012-2345-67kl-mnop78901236',
+      description: 'Ryzen 7 5800X Gaming PC',
+      isActive: true,
+    },
+
+    {
+      equipmentId: 'e3f4g5h6-1123-2345-67kl-mnop78901237',
+      description: 'Core i9-12900K Pro Setup',
+      isActive: true,
+    },
+    {
+      equipmentId: 'e4f5g6h7-2234-2345-67kl-mnop78901238',
+      description: 'Ryzen 9 5950X Extreme',
+      isActive: true,
+    },
+    {
+      equipmentId: 'e5f6g7h8-3345-2345-67kl-mnop78901239',
+      description: 'Core i5-11600K Mid-Range',
+      isActive: true,
+    },
+    {
+      equipmentId: 'e6f7g8h9-4456-2345-67kl-mnop78901240',
+      description: 'Ryzen 5 3600 Budget Build',
+      isActive: true,
+    },
+    {
+      equipmentId: 'e7f8g9h0-5567-2345-67kl-mnop78901241',
+      description: 'Core i3-10100 Entry Level',
+      isActive: true,
+    },
+    {
+      equipmentId: 'e8f9g0h1-6678-2345-67kl-mnop78901242',
+      description: 'Ryzen 3 3300X Starter',
+      isActive: true,
+    },
+    {
+      equipmentId: 'e9f0g1h2-7789-2345-67kl-mnop78901243',
+      description: 'Core i7-11700 Office PC',
+      isActive: true,
+    },
+  ],
+  laboratories: [
+    {
+      laboratoryId: 'l1m2n3o4-9012-3456-78ab-labs89012345',
+      serviceId: 'l1m2n3o4-9012-3456-78ab-labs89012345',
+      serviceType: new ServicesType(),
+      description: 'Programming Lab A',
+      service: new Service(),
+      capacity: 30,
+      metadata: {
+        floor: 1,
+        building: 'Computer Science',
+        hasProjector: true,
+        hasAirConditioning: true,
+        networkSpeed: '1Gbps',
+      },
+      isActive: true,
+    },
+    {
+      laboratoryId: 'l2m3n4o5-0123-4567-89bc-labs90123456',
+      serviceId: 'l2m3n4o5-0123-4567-89bc-labs90123456',
+      serviceType: new ServicesType(),
+      description: 'Networking Lab',
+      service: new Service(),
+      capacity: 25,
+      metadata: {
+        floor: 2,
+        building: 'Engineering',
+        hasProjector: true,
+        hasAirConditioning: true,
+        networkSpeed: '10Gbps',
+      },
+      isActive: true,
+    },
+    {
+      laboratoryId: 'l3m4n5o6-1234-5678-90cd-labs01234567',
+      serviceId: 'l3m4n5o6-1234-5678-90cd-labs01234567',
+      serviceType: new ServicesType(),
+      description: 'Data Science Lab',
+      service: new Service(),
+      capacity: 35,
+      metadata: {
+        floor: 3,
+        building: 'Computer Science',
+        hasProjector: true,
+        hasAirConditioning: true,
+        networkSpeed: '1Gbps',
+      },
+      isActive: true,
+    },
+    {
+      laboratoryId: 'l4m5n6o7-2345-6789-01de-labs12345678',
+      serviceId: 'l4m5n6o7-2345-6789-01de-labs12345678',
+      serviceType: new ServicesType(),
+      description: 'Graphics Design Lab',
+      service: new Service(),
+      capacity: 28,
+      metadata: {
+        floor: 1,
+        building: 'Media Arts',
+        hasProjector: true,
+        hasAirConditioning: true,
+        networkSpeed: '1Gbps',
+      },
+      isActive: true,
+    },
+    {
+      laboratoryId: 'l5m6n7o8-3456-7890-12ef-labs23456789',
+      serviceId: 'l5m6n7o8-3456-7890-12ef-labs23456789',
+      serviceType: new ServicesType(),
+      description: 'Software Engineering Lab',
+      service: new Service(),
+      capacity: 40,
+      metadata: {
+        floor: 2,
+        building: 'Computer Science',
+        hasProjector: true,
+        hasAirConditioning: true,
+        networkSpeed: '1Gbps',
+      },
+      isActive: true,
+    },
+    {
+      laboratoryId: 'l6m7n8o9-4567-8901-23fg-labs34567890',
+      serviceId: 'l6m7n8o9-4567-8901-23fg-labs34567890',
+      serviceType: new ServicesType(),
+      description: 'Robotics Lab',
+      service: new Service(),
+      capacity: 20,
+      metadata: {
+        floor: 1,
+        building: 'Engineering',
+        hasProjector: true,
+        hasAirConditioning: true,
+        networkSpeed: '1Gbps',
+      },
+      isActive: true,
+    },
+    {
+      laboratoryId: 'l7m8n9o0-5678-9012-34gh-labs45678901',
+      serviceId: 'l7m8n9o0-5678-9012-34gh-labs45678901',
+      serviceType: new ServicesType(),
+      description: 'Database Lab',
+      service: new Service(),
+      capacity: 32,
+      metadata: {
+        floor: 3,
+        building: 'Computer Science',
+        hasProjector: true,
+        hasAirConditioning: true,
+        networkSpeed: '1Gbps',
+      },
+      isActive: true,
+    },
+    {
+      laboratoryId: 'l8m9n0o1-6789-0123-45hi-labs56789012',
+      serviceId: 'l8m9n0o1-6789-0123-45hi-labs56789012',
+      serviceType: new ServicesType(),
+      description: 'Multimedia Lab',
+      service: new Service(),
+      capacity: 24,
+      metadata: {
+        floor: 2,
+        building: 'Media Arts',
+        hasProjector: true,
+        hasAirConditioning: true,
+        networkSpeed: '1Gbps',
+      },
+      isActive: true,
+    },
+    {
+      laboratoryId: 'l9m0n1o2-7890-1234-56ij-labs67890123',
+      serviceId: 'l9m0n1o2-7890-1234-56ij-labs67890123',
+      serviceType: new ServicesType(),
+      description: 'Security Lab',
+      service: new Service(),
+      capacity: 22,
+      metadata: {
+        floor: 4,
+        building: 'Computer Science',
+        hasProjector: true,
+        hasAirConditioning: true,
+        networkSpeed: '1Gbps',
+      },
+      isActive: true,
+    },
+    {
+      laboratoryId: 'l0m1n2o3-8901-2345-67jk-labs78901234',
+      serviceId: 'l0m1n2o3-8901-2345-67jk-labs78901234',
+      serviceType: new ServicesType(),
+      description: 'Research Computing Lab',
+      service: new Service(),
+      capacity: 15,
+      metadata: {
+        floor: 5,
+        building: 'Research Center',
+        hasProjector: true,
+        hasAirConditioning: true,
+        networkSpeed: '10Gbps',
+      },
       isActive: true,
     },
   ],
