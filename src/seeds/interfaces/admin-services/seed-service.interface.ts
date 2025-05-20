@@ -1,4 +1,4 @@
-import { ServicesType } from '../../admin-services/services-type/entities/services-type.entity';
+import { ServicesType } from '../../../admin-services/services-type/entities/services-type.entity';
 
 export interface SeedService {
   serviceId: string;

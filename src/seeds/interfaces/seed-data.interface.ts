@@ -1,10 +1,10 @@
-import { SeedPersonType } from './seed-person-type.interface';
-import { SeedNaturalPerson } from './seed-natural-person.interface';
-import { SeedJuridicalPerson } from './seed-juridical-person.interface';
-import { SeedDay } from './seed-day.interface';
-import { SeedServiceType } from './seed-service-type.interface';
-import { SeedSubscriptionType } from './seed-subscription-type.interface';
-import { SeedDocumentIdentityType } from './seed-document_identity_type.interface';
+import { SeedPersonType } from './admin-persons/seed-person-type.interface';
+import { SeedNaturalPerson } from './admin-persons/seed-natural-person.interface';
+import { SeedJuridicalPerson } from './admin-persons/seed-juridical-person.interface';
+import { SeedDay } from './admin-programming/seed-day.interface';
+import { SeedServiceType } from './admin-services/seed-service-type.interface';
+import { SeedSubscriptionType } from './admin-subscriptions/seed-subscription-type.interface';
+import { SeedDocumentIdentityType } from './admin-persons/seed-document_identity_type.interface';
 
 import { SeedAttributeType } from './admin-services/seed-attribute-type.interface';
 import { SeedAttribute } from './admin-services/seed-attribute.interface';
