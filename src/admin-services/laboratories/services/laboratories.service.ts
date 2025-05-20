@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreateLaboratoryDto } from '../dto/create-laboratory.dto';
 import { UpdateLaboratoryDto } from '../dto/update-laboratory.dto';
 
 @Injectable()
 export class LaboratoriesService {
-  create(createLaboratoryDto: CreateLaboratoryDto) {
+  // Methods for endpoints
+  // CLI
+  create() {
     return 'This action adds a new laboratory';
   }
 
