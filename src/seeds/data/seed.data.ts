@@ -5,6 +5,7 @@ import { ServicesType } from '../../admin-services/services-type/entities/servic
 import { DocumentIdentityType } from '../../admin-persons/document-identity-type/entities/document-identity-type.entity';
 import { AttributesType } from '../../admin-services/attributes-type/entities/attributes-type.entity';
 import { Service } from '../../admin-services/services/entities/service.entity';
+import {StatusSubscription} from "../../admin-subscriptions/subscriptions/enums/status-subscription.enum";
 
 export const initialData: SeedData = {
   documentIdentityType: [
@@ -636,6 +637,88 @@ export const initialData: SeedData = {
         networkSpeed: '10Gbps',
       },
       isActive: true,
+    },
+  ],
+  subscriptions: [
+    {
+      subscriptionId: 's1t2u3v4-9012-3456-78ab-subs89012345',
+      initialDate: new Date('2024-01-01'),
+      finalDate: new Date('2024-12-31'),
+      contractSigningDate: new Date('2023-12-15'),
+      person: new Person(),
+      status: StatusSubscription.ACTIVE,
+    },
+    {
+      subscriptionId: 's2t3u4v5-0123-4567-89bc-subs90123456',
+      initialDate: new Date('2024-02-01'),
+      finalDate: new Date('2025-01-31'),
+      contractSigningDate: new Date('2024-01-15'),
+      person: new Person(),
+      status: StatusSubscription.PENDING,
+    },
+    {
+      subscriptionId: 's3t4u5v6-1234-5678-90cd-subs01234567',
+      initialDate: new Date('2024-01-15'),
+      finalDate: new Date('2024-07-14'),
+      contractSigningDate: new Date('2024-01-10'),
+      person: new Person(),
+      status: StatusSubscription.ACTIVE,
+    },
+    {
+      subscriptionId: 's4t5u6v7-2345-6789-01de-subs12345678',
+      initialDate: new Date('2024-03-01'),
+      finalDate: new Date('2025-02-28'),
+      contractSigningDate: new Date('2024-02-15'),
+      person: new Person(),
+      status: StatusSubscription.PENDING,
+    },
+    {
+      subscriptionId: 's5t6u7v8-3456-7890-12ef-subs23456789',
+      initialDate: new Date('2024-01-01'),
+      finalDate: new Date('2024-06-30'),
+      contractSigningDate: new Date('2023-12-20'),
+      person: new Person(),
+      status: StatusSubscription.ACTIVE,
+    },
+    {
+      subscriptionId: 's6t7u8v9-4567-8901-23fg-subs34567890',
+      initialDate: new Date('2024-02-15'),
+      finalDate: new Date('2024-08-14'),
+      contractSigningDate: new Date('2024-02-01'),
+      person: new Person(),
+      status: StatusSubscription.COMPLETED,
+    },
+    {
+      subscriptionId: 's7t8u9v0-5678-9012-34gh-subs45678901',
+      initialDate: new Date('2024-04-01'),
+      finalDate: new Date('2025-03-31'),
+      contractSigningDate: new Date('2024-03-15'),
+      person: new Person(),
+      status: StatusSubscription.ACTIVE,
+    },
+    {
+      subscriptionId: 's8t9u0v1-6789-0123-45hi-subs56789012',
+      initialDate: new Date('2024-03-15'),
+      finalDate: new Date('2024-09-14'),
+      contractSigningDate: new Date('2024-03-01'),
+      person: new Person(),
+      status: StatusSubscription.CANCELED,
+    },
+    {
+      subscriptionId: 's9t0u1v2-7890-1234-56ij-subs67890123',
+      initialDate: new Date('2024-05-01'),
+      finalDate: new Date('2025-04-30'),
+      contractSigningDate: new Date('2024-04-15'),
+      person: new Person(),
+      status: StatusSubscription.ACTIVE,
+    },
+    {
+      subscriptionId: 's0t1u2v3-8901-2345-67jk-subs78901234',
+      initialDate: new Date('2024-01-01'),
+      finalDate: new Date('2024-12-31'),
+      contractSigningDate: new Date('2023-12-15'),
+      person: new Person(),
+      status: StatusSubscription.PENDING,
     },
   ],
 };
