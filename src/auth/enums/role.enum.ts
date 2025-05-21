@@ -1,4 +1,4 @@
 export enum Role {
-  Client = 'Cliente',
-  Admin = 'Administrador',
+  CLIENT = 'CLIENTE',
+  ADMIN = 'ADMINISTRADOR',
 }

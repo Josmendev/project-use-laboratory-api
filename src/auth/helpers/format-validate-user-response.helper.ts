@@ -13,7 +13,7 @@ export const formatValidateUserResponse = (
   const baseResponse = {
     subscriberId: subscriber.subscriberId,
     username: subscriber.username,
-    role: subscriber.subscriberRoles.map((role) => role.role.description),
+    roles: subscriber.subscriberRoles.map((role) => role.role.description),
   };
 
   // 2. Persona natural del SUSCRIPTOR (siempre carga)

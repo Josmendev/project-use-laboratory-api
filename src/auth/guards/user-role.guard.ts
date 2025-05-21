@@ -30,7 +30,7 @@ export class UserRoleGuard implements CanActivate {
     if (!user)
       throw new BadRequestException('No se encuentra registrado el usuario');
     const confirmationRole = requiredRoles.some((role) =>
-      user.role?.includes(role),
+      user.roles?.includes(role),
     );
     if (confirmationRole) return true;
 

@@ -5,6 +5,7 @@ import { StatusSubscription } from 'src/admin-subscriptions/subscriptions/enums/
 export class ValidateUserResponseDto {
   subscriberId: string;
   username: string;
+  roles: string[];
   naturalPerson: NaturalPersonResponseDto;
   subscription: {
     subscriptionId: string;
@@ -14,5 +15,4 @@ export class ValidateUserResponseDto {
     parameter: ParameterResponseDto;
     person: any;
   };
-  role: string[];
 }

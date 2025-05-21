@@ -1,26 +1,55 @@
 import { Injectable } from '@nestjs/common';
-import { CreateReservationDto } from './dto/create-reservation.dto';
-import { UpdateReservationDto } from './dto/update-reservation.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Reservation } from './entities/reservation.entity';
+import { Repository } from 'typeorm';
+import { StatusReservation } from './enums/status-reservation.enum';
 
 @Injectable()
 export class ReservationsService {
-  create(createReservationDto: CreateReservationDto) {
-    return 'This action adds a new reservation';
-  }
+  constructor(
+    @InjectRepository(Reservation)
+    private readonly reservationRepository: Repository<Reservation>,
+  ) {}
 
-  findAll() {
-    return `This action returns all reservations`;
-  }
+  async checkAvailability(
+    laboratoryId: string,
+    date: Date,
+    startTime: string,
+    endTime: string,
+    equipmentQuantity: number,
+  ): Promise<boolean> {
+    const startDateTime = new Date(
+      `${date.toISOString().split('T')[0]}T${startTime}`,
+    );
+    const endDateTime = new Date(
+      `${date.toISOString().split('T')[0]}T${endTime}`,
+    );
 
-  findOne(id: number) {
-    return `This action returns a #${id} reservation`;
-  }
+    const activeReservations = await this.reservationRepository
+      .createQueryBuilder('reservation')
+      .innerJoin(
+        'reservation.reservationLaboratoryEquipment',
+        'reservationLaboratoryEquipment',
+      )
+      .innerJoin(
+        'reservationLaboratoryEquipment.laboratoryEquipment',
+        'equipment',
+      )
+      .innerJoin('equipment.laboratory', 'laboratory')
+      .where('laboratory.laboratoryId = :laboratoryId', { laboratoryId })
+      .andWhere('reservation.status != :status', {
+        status: StatusReservation.PENDING,
+      })
+      .andWhere(
+        `
+        (
+          (reservation.initialHourDate < :endDateTime AND reservation.finalHourDate > :startDateTime)
+        )
+      `,
+        { startDateTime, endDateTime },
+      )
+      .getCount();
 
-  update(id: number, updateReservationDto: UpdateReservationDto) {
-    return `This action updates a #${id} reservation`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} reservation`;
+    return activeReservations < equipmentQuantity;
   }
 }

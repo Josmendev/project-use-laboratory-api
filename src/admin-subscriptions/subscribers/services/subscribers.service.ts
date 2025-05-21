@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Subscriber } from '../entities/subscriber.entity';
+import { StatusSubscription } from 'src/admin-subscriptions/subscriptions/enums/status-subscription.enum';
 
 @Injectable()
 export class SubscribersService {
@@ -31,7 +32,24 @@ export class SubscribersService {
     return subscriber;
   }
 
-  async findOneBySubscriberId(
+  async findOneBySubscriberId(subscriberId: string): Promise<Subscriber> {
+    const queryBuilder =
+      this.subscriberRepository.createQueryBuilder('subscriber');
+    queryBuilder
+      .leftJoinAndSelect('subscriber.subscription', 'subscription')
+      .where('subscriber.subscriberId = :subscriberId', { subscriberId })
+      .andWhere('subscription.status = :status', {
+        status: StatusSubscription.ACTIVE,
+      });
+    const subscriber = await queryBuilder.getOne();
+    if (!subscriber)
+      throw new NotFoundException(
+        `No se encuentra el usuario con id: ${subscriberId}`,
+      );
+    return subscriber;
+  }
+
+  async findOneBySubscriberIdWithLogin(
     subscriberId: string,
   ): Promise<Subscriber | null> {
     const queryBuilder =
@@ -68,7 +86,7 @@ export class SubscribersService {
       .leftJoinAndSelect('subscriberRoles.role', 'role')
       .where('subscriber.subscriberId = :subscriberId', { subscriberId });
     const subscriber = await queryBuilder.getOne();
-    console.log(subscriber);
+    // console.log(subscriber);
     return subscriber;
   }
 }
