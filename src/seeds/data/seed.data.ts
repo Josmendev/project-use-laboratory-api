@@ -5,7 +5,8 @@ import { ServicesType } from '../../admin-services/services-type/entities/servic
 import { DocumentIdentityType } from '../../admin-persons/document-identity-type/entities/document-identity-type.entity';
 import { AttributesType } from '../../admin-services/attributes-type/entities/attributes-type.entity';
 import { Service } from '../../admin-services/services/entities/service.entity';
-import {StatusSubscription} from "../../admin-subscriptions/subscriptions/enums/status-subscription.enum";
+import { StatusSubscription } from '../../admin-subscriptions/subscriptions/enums/status-subscription.enum';
+import { SubscriptionsType } from '../../admin-subscriptions/subscriptions-type/entities/subscriptions-type.entity';
 
 export const initialData: SeedData = {
   documentIdentityType: [
@@ -645,6 +646,7 @@ export const initialData: SeedData = {
       initialDate: new Date('2024-01-01'),
       finalDate: new Date('2024-12-31'),
       contractSigningDate: new Date('2023-12-15'),
+      subscriptionType: new SubscriptionsType(),
       person: new Person(),
       status: StatusSubscription.ACTIVE,
     },
@@ -653,6 +655,7 @@ export const initialData: SeedData = {
       initialDate: new Date('2024-02-01'),
       finalDate: new Date('2025-01-31'),
       contractSigningDate: new Date('2024-01-15'),
+      subscriptionType: new SubscriptionsType(),
       person: new Person(),
       status: StatusSubscription.PENDING,
     },
@@ -661,6 +664,7 @@ export const initialData: SeedData = {
       initialDate: new Date('2024-01-15'),
       finalDate: new Date('2024-07-14'),
       contractSigningDate: new Date('2024-01-10'),
+      subscriptionType: new SubscriptionsType(),
       person: new Person(),
       status: StatusSubscription.ACTIVE,
     },
@@ -669,6 +673,7 @@ export const initialData: SeedData = {
       initialDate: new Date('2024-03-01'),
       finalDate: new Date('2025-02-28'),
       contractSigningDate: new Date('2024-02-15'),
+      subscriptionType: new SubscriptionsType(),
       person: new Person(),
       status: StatusSubscription.PENDING,
     },
@@ -677,6 +682,7 @@ export const initialData: SeedData = {
       initialDate: new Date('2024-01-01'),
       finalDate: new Date('2024-06-30'),
       contractSigningDate: new Date('2023-12-20'),
+      subscriptionType: new SubscriptionsType(),
       person: new Person(),
       status: StatusSubscription.ACTIVE,
     },
@@ -685,6 +691,7 @@ export const initialData: SeedData = {
       initialDate: new Date('2024-02-15'),
       finalDate: new Date('2024-08-14'),
       contractSigningDate: new Date('2024-02-01'),
+      subscriptionType: new SubscriptionsType(),
       person: new Person(),
       status: StatusSubscription.COMPLETED,
     },
@@ -693,6 +700,7 @@ export const initialData: SeedData = {
       initialDate: new Date('2024-04-01'),
       finalDate: new Date('2025-03-31'),
       contractSigningDate: new Date('2024-03-15'),
+      subscriptionType: new SubscriptionsType(),
       person: new Person(),
       status: StatusSubscription.ACTIVE,
     },
@@ -701,6 +709,7 @@ export const initialData: SeedData = {
       initialDate: new Date('2024-03-15'),
       finalDate: new Date('2024-09-14'),
       contractSigningDate: new Date('2024-03-01'),
+      subscriptionType: new SubscriptionsType(),
       person: new Person(),
       status: StatusSubscription.CANCELED,
     },
@@ -709,6 +718,7 @@ export const initialData: SeedData = {
       initialDate: new Date('2024-05-01'),
       finalDate: new Date('2025-04-30'),
       contractSigningDate: new Date('2024-04-15'),
+      subscriptionType: new SubscriptionsType(),
       person: new Person(),
       status: StatusSubscription.ACTIVE,
     },
@@ -717,6 +727,7 @@ export const initialData: SeedData = {
       initialDate: new Date('2024-01-01'),
       finalDate: new Date('2024-12-31'),
       contractSigningDate: new Date('2023-12-15'),
+      subscriptionType: new SubscriptionsType(),
       person: new Person(),
       status: StatusSubscription.PENDING,
     },

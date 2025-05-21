@@ -17,6 +17,9 @@ import { Equipment } from '../admin-services/equipment/entities/equipment.entity
 import { EquipmentResources } from '../admin-services/equipment/entities/equipment-resources.entity';
 import { Laboratory } from '../admin-services/laboratories/entities/laboratory.entity';
 import { LaboratoryEquipment } from '../admin-services/laboratories/entities/laboratory-equipment.entity';
+import { Subscription } from '../admin-subscriptions/subscriptions/entities/subscription.entity';
+import { SubscriptionDetail } from '../admin-subscriptions/subscriptions/entities/subscriptionDetail.entity';
+import { Parameter } from '../admin-subscriptions/parameters/entities/parameter.entity';
 
 @Injectable()
 export class SeedsService {
@@ -31,8 +34,6 @@ export class SeedsService {
     private readonly juridicalPersonRepository: Repository<JuridicalPerson>,
     @InjectRepository(NaturalPerson)
     private readonly naturalPersonRepository: Repository<NaturalPerson>,
-    @InjectRepository(SubscriptionsType)
-    private readonly subscriptionsTypeRepository: Repository<SubscriptionsType>,
     @InjectRepository(ServicesType)
     private readonly servicesTypeRepository: Repository<ServicesType>,
     @InjectRepository(Service)
@@ -49,6 +50,14 @@ export class SeedsService {
     private readonly laboratoryRepository: Repository<Laboratory>,
     @InjectRepository(LaboratoryEquipment)
     private readonly laboratoryEquipmentRepository: Repository<LaboratoryEquipment>,
+    @InjectRepository(SubscriptionsType)
+    private readonly subscriptionsTypeRepository: Repository<SubscriptionsType>,
+    @InjectRepository(Subscription)
+    private readonly subscriptionRepository: Repository<Subscription>,
+    @InjectRepository(SubscriptionDetail)
+    private readonly subscriptionDetailRepository: Repository<SubscriptionDetail>,
+    @InjectRepository(Parameter)
+    private readonly parameterRepository: Repository<Parameter>,
   ) {}
 
   async runSeed(): Promise<string> {
@@ -67,10 +76,14 @@ export class SeedsService {
     await this.insertAttributesToEquipment();
 
     //** register Laboratories */
-    await this.insertSubscriptionsType();
+
     await this.insertServicesType();
     await this.insertLaboratories();
     await this.insertLaboratoriesEquipment();
+
+    /** register subscriptions */
+    await this.insertSubscriptionsType();
+    await this.insertSubscriptions();
 
     return 'Seed ejecutado con éxito';
   }
@@ -189,16 +202,6 @@ export class SeedsService {
     return true;
   }
 
-  private async insertSubscriptionsType() {
-    const insertPromises: Promise<SubscriptionsType>[] = [];
-    initialData.subscriptionTypes.forEach((sType) => {
-      insertPromises.push(this.subscriptionsTypeRepository.save(sType));
-    });
-    await Promise.all(insertPromises);
-    console.log('subscriptionType insertados');
-    return true;
-  }
-
   private async insertServicesType(): Promise<boolean> {
     const insertPromises: Promise<ServicesType>[] = [];
     initialData.serviceTypes.forEach((dType) => {
@@ -208,28 +211,6 @@ export class SeedsService {
     console.log('documentIdentityType insertados');
     return true;
   }
-
-  // private async insertServices(): Promise<boolean> {
-  //   const servicesTypeInfraestructura =
-  //     await this.servicesTypeRepository.findOneBy({
-  //       serviceTypeId: 'm5n6o7p8-1234-5678-90jk-lmno01234567',
-  //     });
-  //
-  //   if (!servicesTypeInfraestructura) {
-  //     throw new Error('No se encontró el tipo de servicio Infraestructura.');
-  //   }
-  //
-  //   const insertPromises: Promise<Service>[] = [];
-  //
-  //   for (const service of initialData.services) {
-  //     service.serviceType = servicesTypeInfraestructura;
-  //     insertPromises.push(this.serviceRepository.save(service));
-  //   }
-  //
-  //   await Promise.all(insertPromises);
-  //   console.log('Servicios insertados correctamente');
-  //   return true;
-  // }
 
   private async insertServicesTypexx(): Promise<boolean> {
     const insertPromises: Promise<ServicesType>[] = [];
@@ -400,7 +381,73 @@ export class SeedsService {
     return true;
   }
 
+  /** subscriptions */
+
+  private async insertSubscriptionsType() {
+    const insertPromises: Promise<SubscriptionsType>[] = [];
+    initialData.subscriptionTypes.forEach((sType) => {
+      insertPromises.push(this.subscriptionsTypeRepository.save(sType));
+    });
+    await Promise.all(insertPromises);
+    console.log('subscriptionType insertados');
+    return true;
+  }
+
+  private async insertSubscriptions(): Promise<boolean> {
+    const insertPromises: Promise<SubscriptionDetail>[] = [];
+
+    for (const subscription of initialData.subscriptions) {
+      const subscriptionsType = await this.subscriptionsTypeRepository.find();
+      subscription.subscriptionType =
+        subscriptionsType[Math.floor(Math.random() * subscriptionsType.length)];
+
+      const person = await this.personRepository.find();
+      subscription.person = person[Math.floor(Math.random() * person.length)];
+
+      const service = await this.serviceRepository.find();
+
+      const randomService = service[Math.floor(Math.random() * service.length)];
+
+      const promise = this.subscriptionRepository
+        .save(subscription)
+        .then(async (savedSubscription) => {
+          const parameter = this.parameterRepository.create({
+            parameterId: subscription.subscriptionId,
+            subscription: savedSubscription,
+            description: '-',
+            numberReservationDay:
+              Math.floor(Math.random() * (35 - 15 + 1)) + 15,
+            miniumNumberMinutes:
+              Math.floor(Math.random() * (120 - 50 + 1)) + 60,
+            rangeBetweenReservations:
+              Math.floor(Math.random() * (120 - 50 + 1)) + 60,
+          });
+
+          await this.parameterRepository.save(parameter);
+
+          const subscriptionDetail = this.subscriptionDetailRepository.create({
+            subscriptionDetailId: randomUUID(),
+            subscription: savedSubscription,
+            service: randomService,
+            accountsNumber: Math.floor(Math.random() * (200 - 50 + 1)) + 50,
+          });
+          return this.subscriptionDetailRepository.save(subscriptionDetail);
+        });
+
+      insertPromises.push(promise);
+    }
+
+    await Promise.all(insertPromises);
+    console.log('Subscriptions insertados correctamente');
+    return true;
+  }
+
   private async deleteAllTables(): Promise<void> {
+    /**subscriptions*/
+    await this.subscriptionDetailRepository.deleteAll();
+    await this.parameterRepository.deleteAll();
+    await this.subscriptionRepository.deleteAll();
+
     /** persons */
     await this.naturalPersonRepository.deleteAll();
     await this.juridicalPersonRepository.deleteAll();

@@ -16,6 +16,9 @@ import { Equipment } from '../admin-services/equipment/entities/equipment.entity
 import { EquipmentResources } from '../admin-services/equipment/entities/equipment-resources.entity';
 import { Laboratory } from '../admin-services/laboratories/entities/laboratory.entity';
 import { LaboratoryEquipment } from '../admin-services/laboratories/entities/laboratory-equipment.entity';
+import { Subscription } from '../admin-subscriptions/subscriptions/entities/subscription.entity';
+import { SubscriptionDetail } from '../admin-subscriptions/subscriptions/entities/subscriptionDetail.entity';
+import { Parameter } from '../admin-subscriptions/parameters/entities/parameter.entity';
 
 @Module({
   imports: [
@@ -24,7 +27,6 @@ import { LaboratoryEquipment } from '../admin-services/laboratories/entities/lab
       Person,
       NaturalPerson,
       JuridicalPerson,
-      SubscriptionsType,
       DocumentIdentityType,
       ServicesType,
       Service,
@@ -33,7 +35,11 @@ import { LaboratoryEquipment } from '../admin-services/laboratories/entities/lab
       Equipment,
       EquipmentResources,
       Laboratory,
-      LaboratoryEquipment
+      LaboratoryEquipment,
+      SubscriptionsType,
+      Subscription,
+      SubscriptionDetail,
+      Parameter,
     ]),
   ],
   controllers: [SeedsController],
