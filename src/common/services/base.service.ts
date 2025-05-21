@@ -26,6 +26,15 @@ export abstract class BaseService<T extends object> {
     const filtered = data.filter((item) =>
       searchFields.some((field) => {
         const value = item[field];
+        // Caso cuando el valor es un array (como resources)
+        if (Array.isArray(value)) {
+          return value.some(
+            (element) =>
+              typeof element === 'string' &&
+              element.toLowerCase().includes(normalizedTerm),
+          );
+        }
+        // Caso normal para strings
         return (
           typeof value === 'string' &&
           value.toLowerCase().includes(normalizedTerm)

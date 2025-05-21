@@ -9,7 +9,6 @@ import { ProgrammingHoursService } from '../../../admin-programming/programming/
 import { LaboratoryDisponibilityResponseDto } from '../dto/laboratories-disponibility-response.dto';
 import { Paginated } from '../../../common/interfaces/paginated.interface';
 import { BaseService } from 'src/common/services/base.service';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class LaboratoryEquipeService extends BaseService<LaboratoryEquipment> {
@@ -26,7 +25,6 @@ export class LaboratoryEquipeService extends BaseService<LaboratoryEquipment> {
   // CLI
   async findAllLaboratoriesByDisponibility(
     findAllDisponibilityListDto: FindAllDisponibilityListDto,
-    paginationDto: PaginationDto,
     userId: string,
   ): Promise<Paginated<LaboratoryDisponibilityResponseDto>> {
     const {
@@ -36,6 +34,8 @@ export class LaboratoryEquipeService extends BaseService<LaboratoryEquipment> {
       reservationTime,
       maximumReservationTime,
       numberReservationDays,
+      searchTerm,
+      ...paginationDto
     } = findAllDisponibilityListDto;
     this.isValidDate(date, initialHour);
     this.isValidReservationTime(reservationTime, maximumReservationTime);
@@ -57,6 +57,13 @@ export class LaboratoryEquipeService extends BaseService<LaboratoryEquipment> {
           numberReservationDays,
         },
         userId,
+      );
+    if (searchTerm)
+      return await this.searchBase(
+        laboratoriesDisponibility,
+        searchTerm,
+        paginationDto,
+        ['resources'] as (keyof LaboratoryDisponibilityResponseDto)[],
       );
     return await this.findAllBase(laboratoriesDisponibility, paginationDto);
   }
