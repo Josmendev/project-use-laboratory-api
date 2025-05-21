@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LaboratoryEquipment } from '../entities/laboratory-equipment.entity';
 import { Repository } from 'typeorm';
@@ -66,6 +70,23 @@ export class LaboratoryEquipeService extends BaseService<LaboratoryEquipment> {
         ['resources'] as (keyof LaboratoryDisponibilityResponseDto)[],
       );
     return await this.findAllBase(laboratoriesDisponibility, paginationDto);
+  }
+
+  async findOneById(id: string) {
+    const laboratoryEquipment =
+      await this.laboratoryEquipmentRepository.findOne({
+        where: { laboratoryEquipeId: id },
+        relations: [
+          'equipment',
+          'equipment.equipmentResources',
+          'equipment.equipmentResources.attribute',
+        ],
+      });
+    if (!laboratoryEquipment)
+      throw new NotFoundException(
+        `No se ha encontrado el laboratorio con id ${id}`,
+      );
+    return laboratoryEquipment;
   }
 
   // Internal helpers methods

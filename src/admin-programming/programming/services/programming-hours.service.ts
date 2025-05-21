@@ -76,9 +76,6 @@ export class ProgrammingHoursService {
           { initialHour: initialHourString, finalHour: finalHourString },
         )
         .getMany();
-
-      console.log('estoy por aqui');
-
       // 2. Verificar disponibilidad para cada slot
       const resultWithAvailability = await this.getAvailableSlots(
         availableSlots,
@@ -91,9 +88,9 @@ export class ProgrammingHoursService {
         (slot) => slot.laboratory && slot.laboratory.equipment.length > 0,
       );
 
-      return finalAvailableSlots.map((slot) => {
-        return formatValidateHoursResponse(slot);
-      });
+      return finalAvailableSlots.flatMap((slot) =>
+        formatValidateHoursResponse(slot),
+      );
     } catch (error) {
       throw new Error('Error al validar disponibilidad de horarios: ', error);
     }
@@ -147,6 +144,7 @@ export class ProgrammingHoursService {
 
         return {
           laboratoryId: lab.laboratoryId,
+          laboratoryEquipment: lab.laboratoryEquipment,
           description: lab.description,
           slotId: slot.programmingHoursId,
           initialHour: slot.initialHour,

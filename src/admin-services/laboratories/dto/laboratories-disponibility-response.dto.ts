@@ -1,6 +1,7 @@
 import { OperationTime } from '../interfaces/operation-time.interface';
 
 export class LaboratoryDisponibilityResponseDto {
+  laboratoryEquipmentId: string;
   laboratoryId: string;
   description: string;
   operationTime: OperationTime[];

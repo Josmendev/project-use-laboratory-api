@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
 import { LaboratoriesService } from './services/laboratories.service';
 import { FindAllDisponibilityListDto } from './dto/find-all-disponibility-list.dto';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
@@ -23,5 +23,10 @@ export class LaboratoriesController {
       findAllDisponibilityListDto,
       user.subscriberId,
     );
+  }
+
+  @Get('equipment-details/:id')
+  findOneById(@Param('id', ParseUUIDPipe) id: string) {
+    return this.laboratoryEquipeService.findOneById(id);
   }
 }

@@ -28,7 +28,7 @@ export class AuthService {
     const user = await this.subscribersService.findOneByUsername(username, url);
     if (!user || user.subscription.status !== StatusSubscription.ACTIVE)
       throw new NotFoundException(
-        `No se encuentra el usuario con el nombre de usuario: ${username}`,
+        `No se encuentra el usuario con el código de acceso: ${username}`,
       );
     const token = this.getJwtToken({ id: user.subscriberId });
     return {
