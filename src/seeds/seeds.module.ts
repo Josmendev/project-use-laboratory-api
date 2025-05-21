@@ -19,6 +19,7 @@ import { LaboratoryEquipment } from '../admin-services/laboratories/entities/lab
 import { Subscription } from '../admin-subscriptions/subscriptions/entities/subscription.entity';
 import { SubscriptionDetail } from '../admin-subscriptions/subscriptions/entities/subscriptionDetail.entity';
 import { Parameter } from '../admin-subscriptions/parameters/entities/parameter.entity';
+import { Day } from '../admin-programming/day/entities/day.entity';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { Parameter } from '../admin-subscriptions/parameters/entities/parameter.
       Subscription,
       SubscriptionDetail,
       Parameter,
+      Day
     ]),
   ],
   controllers: [SeedsController],

@@ -20,6 +20,7 @@ import { LaboratoryEquipment } from '../admin-services/laboratories/entities/lab
 import { Subscription } from '../admin-subscriptions/subscriptions/entities/subscription.entity';
 import { SubscriptionDetail } from '../admin-subscriptions/subscriptions/entities/subscriptionDetail.entity';
 import { Parameter } from '../admin-subscriptions/parameters/entities/parameter.entity';
+import { Day } from '../admin-programming/day/entities/day.entity';
 
 @Injectable()
 export class SeedsService {
@@ -58,25 +59,26 @@ export class SeedsService {
     private readonly subscriptionDetailRepository: Repository<SubscriptionDetail>,
     @InjectRepository(Parameter)
     private readonly parameterRepository: Repository<Parameter>,
+    @InjectRepository(Day)
+    private readonly dayRepository: Repository<Day>,
   ) {}
 
   async runSeed(): Promise<string> {
     await this.deleteAllTables();
 
-    /* register persons */
+    /** register persons */
     await this.insertPersonType();
     await this.insertDocumentIdentityType();
     await this.inserNaturalPerson();
     await this.inserJuridicalPerson();
 
-    //** register Equipment */
+    /** register Equipment */
     await this.insertAttributeTypes();
     await this.insertAttributes();
     await this.insertEquipment();
     await this.insertAttributesToEquipment();
 
-    //** register Laboratories */
-
+    /** register Laboratories */
     await this.insertServicesType();
     await this.insertLaboratories();
     await this.insertLaboratoriesEquipment();
@@ -84,6 +86,10 @@ export class SeedsService {
     /** register subscriptions */
     await this.insertSubscriptionsType();
     await this.insertSubscriptions();
+
+    /** register program*/
+    await this.insertDays();
+    await this.insertProgramming();
 
     return 'Seed ejecutado con éxito';
   }
@@ -381,6 +387,17 @@ export class SeedsService {
     return true;
   }
 
+  /** programing */
+  private async insertDays() {
+    const insertPromises: Promise<Day>[] = [];
+    initialData.days.forEach((day) => {
+      insertPromises.push(this.dayRepository.save(day));
+    });
+    await Promise.all(insertPromises);
+    console.log('days insertados');
+    return true;
+  }
+
   /** subscriptions */
 
   private async insertSubscriptionsType() {
@@ -440,6 +457,130 @@ export class SeedsService {
     await Promise.all(insertPromises);
     console.log('Subscriptions insertados correctamente');
     return true;
+  }
+
+  private async insertProgramming(): Promise<boolean> {
+    const subscriptionDetails = await this.subscriptionDetailRepository.find({
+      relations: ['subscription', 'service'],
+    });
+
+    for (const detalle of subscriptionDetails) {
+      //console.log(detalle.subscription);
+
+      console.log('NUEVO INICIO ');
+      console.log(detalle.subscription.initialDate);
+      console.log(detalle.subscription.finalDate);
+
+      const randomProgrammingDates = this.getRandomDateRanges(
+        detalle.subscription.initialDate,
+        detalle.subscription.finalDate,
+      );
+
+      await this.generateProgramming(randomProgrammingDates);
+      console.log(randomProgrammingDates);
+      // const subscription = await this.subscriptionRepository.findOneBy({
+      //   subscriptionId: detalle.subscription.subscriptionId,
+      // });
+
+      //console.log(subscription);
+
+      // const dateRange = this.getRandomDateRange(now);
+      //
+      // // Aquí puedes hacer lo que necesites con `subscription` y `dateRange`
+      // console.log('Subscription:', subscription);
+      // console.log('Rango de fechas:', dateRange);
+    }
+
+    //const equipment = await this.equipmentRepository.find();
+
+    //const insertPromises: Promise<LaboratoryEquipment>[] = [];
+
+    // subscriptionDetails.forEach((laboratory) => {
+    //   const randomEquipment =
+    //     equipment[Math.floor(Math.random() * equipment.length)];
+    //
+    //   const resource = this.laboratoryEquipmentRepository.create({
+    //     laboratoryEquipeId: randomUUID(),
+    //     laboratory,
+    //     quantity: laboratory.capacity,
+    //     equipment: randomEquipment,
+    //   });
+    //   insertPromises.push(this.laboratoryEquipmentRepository.save(resource));
+    // });
+    //
+    // await Promise.all(insertPromises);
+
+    console.log('Programming  insertados correctamente');
+    return true;
+  }
+
+  private async generateProgramming(
+    programming: { startDate: Date; endDate: Date }[],
+  ): Promise<boolean> {
+    const insertPromises: Promise<SubscriptionDetail>[] = [];
+    await Promise.all(insertPromises);
+    return true;
+  }
+
+  private getRandomDateRanges(
+    startDate: Date,
+    finalDate: Date,
+  ): {
+    startDate: Date;
+    endDate: Date;
+  }[] {
+    const monthOptions = [1, 3, 6];
+    const ranges: { startDate: Date; endDate: Date }[] = [];
+
+    let currentStart = new Date(startDate);
+
+    while (currentStart < finalDate) {
+      const remainingMonths =
+        finalDate.getMonth() -
+        currentStart.getMonth() +
+        12 * (finalDate.getFullYear() - currentStart.getFullYear());
+
+      const validOptions = monthOptions.filter((m) => m <= remainingMonths);
+
+      if (validOptions.length === 0) break;
+
+      const randomIndex = Math.floor(Math.random() * validOptions.length);
+      const monthsToAdd = validOptions[randomIndex];
+
+      const currentEnd = new Date(currentStart);
+      currentEnd.setMonth(currentEnd.getMonth() + monthsToAdd);
+
+      if (currentEnd > finalDate) {
+        ranges.push({ startDate: currentStart, endDate: new Date(finalDate) });
+        break;
+      } else {
+        ranges.push({ startDate: currentStart, endDate: currentEnd });
+
+        const nextStart = new Date(currentEnd);
+        nextStart.setDate(nextStart.getDate() + 1);
+
+        currentStart = nextStart;
+      }
+    }
+
+    return ranges;
+  }
+
+  private getRandomDateRange(startDate: Date): {
+    startDate: Date;
+    endDate: Date;
+  } {
+    const monthOptions = [1, 3, 6];
+    const randomIndex = Math.floor(Math.random() * monthOptions.length);
+    const monthsToAdd = monthOptions[randomIndex];
+
+    const endDate = new Date(startDate);
+    endDate.setMonth(endDate.getMonth() + monthsToAdd);
+
+    return {
+      startDate,
+      endDate,
+    };
   }
 
   private async deleteAllTables(): Promise<void> {
