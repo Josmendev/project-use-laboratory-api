@@ -21,6 +21,10 @@ import { Subscription } from '../admin-subscriptions/subscriptions/entities/subs
 import { SubscriptionDetail } from '../admin-subscriptions/subscriptions/entities/subscriptionDetail.entity';
 import { Parameter } from '../admin-subscriptions/parameters/entities/parameter.entity';
 import { Day } from '../admin-programming/day/entities/day.entity';
+import { ProgrammingSubscriptionDetail } from '../admin-programming/programming/entities/programming-subscription-detail.entity';
+import { StatusProgramming } from '../admin-programming/programming/enums/status-programming.enum';
+import { ProgrammingDay } from '../admin-programming/programming/entities/programming-day.entity';
+import { ProgrammingHours } from '../admin-programming/programming/entities/programming-hours.entity';
 
 @Injectable()
 export class SeedsService {
@@ -61,35 +65,43 @@ export class SeedsService {
     private readonly parameterRepository: Repository<Parameter>,
     @InjectRepository(Day)
     private readonly dayRepository: Repository<Day>,
+    @InjectRepository(ProgrammingSubscriptionDetail)
+    private readonly programmingSubscriptionDetailRepository: Repository<ProgrammingSubscriptionDetail>,
+    @InjectRepository(ProgrammingDay)
+    private readonly programmingDayRepository: Repository<ProgrammingDay>,
+    @InjectRepository(ProgrammingHours)
+    private readonly programmingHoursRepository: Repository<ProgrammingHours>,
   ) {}
 
   async runSeed(): Promise<string> {
     await this.deleteAllTables();
 
     /** register persons */
-    await this.insertPersonType();
-    await this.insertDocumentIdentityType();
-    await this.inserNaturalPerson();
-    await this.inserJuridicalPerson();
+    // await this.insertPersonType();
+    // await this.insertDocumentIdentityType();
+    // await this.inserNaturalPerson();
+    // await this.inserJuridicalPerson();
 
     /** register Equipment */
-    await this.insertAttributeTypes();
-    await this.insertAttributes();
-    await this.insertEquipment();
-    await this.insertAttributesToEquipment();
+    // await this.insertAttributeTypes();
+    // await this.insertAttributes();
+    // await this.insertEquipment();
+    // await this.insertAttributesToEquipment();
 
     /** register Laboratories */
-    await this.insertServicesType();
-    await this.insertLaboratories();
-    await this.insertLaboratoriesEquipment();
+    // await this.insertServicesType();
+    // await this.insertLaboratories();
+    // await this.insertLaboratoriesEquipment();
 
     /** register subscriptions */
-    await this.insertSubscriptionsType();
-    await this.insertSubscriptions();
+    // await this.insertSubscriptionsType();
+    // await this.insertSubscriptions();
 
     /** register program*/
-    await this.insertDays();
-    await this.insertProgramming();
+    // await this.insertDays();
+    // await this.insertProgrammingSubscription();
+    // await this.insertProgrammingDays();
+    await this.insertProgrammingHours();
 
     return 'Seed ejecutado con éxito';
   }
@@ -459,64 +471,107 @@ export class SeedsService {
     return true;
   }
 
-  private async insertProgramming(): Promise<boolean> {
+  private async insertProgrammingSubscription(): Promise<boolean> {
+    const insertPromises: Promise<ProgrammingSubscriptionDetail>[] = [];
+
     const subscriptionDetails = await this.subscriptionDetailRepository.find({
       relations: ['subscription', 'service'],
     });
-
     for (const detalle of subscriptionDetails) {
-      //console.log(detalle.subscription);
-
-      console.log('NUEVO INICIO ');
-      console.log(detalle.subscription.initialDate);
-      console.log(detalle.subscription.finalDate);
-
       const randomProgrammingDates = this.getRandomDateRanges(
         detalle.subscription.initialDate,
         detalle.subscription.finalDate,
       );
 
-      await this.generateProgramming(randomProgrammingDates);
-      console.log(randomProgrammingDates);
-      // const subscription = await this.subscriptionRepository.findOneBy({
-      //   subscriptionId: detalle.subscription.subscriptionId,
-      // });
-
-      //console.log(subscription);
-
-      // const dateRange = this.getRandomDateRange(now);
-      //
-      // // Aquí puedes hacer lo que necesites con `subscription` y `dateRange`
-      // console.log('Subscription:', subscription);
-      // console.log('Rango de fechas:', dateRange);
+      for (const programmingDates of randomProgrammingDates) {
+        const programming = this.programmingSubscriptionDetailRepository.create(
+          {
+            programmingSubscriptionDetailId: randomUUID(),
+            subscriptionDetail: detalle,
+            initialDate: programmingDates.startDate,
+            finalDate: programmingDates.endDate,
+            metadata: {
+              createdBy: 'SYSTEM',
+              lastModifiedBy: 'SYSTEM',
+            },
+            status: StatusProgramming.ACTIVE,
+          },
+        );
+        //await this.programmingSubscriptionDetailRepository.save(programming);
+        insertPromises.push(
+          this.programmingSubscriptionDetailRepository.save(programming),
+        );
+      }
     }
-
-    //const equipment = await this.equipmentRepository.find();
-
-    //const insertPromises: Promise<LaboratoryEquipment>[] = [];
-
-    // subscriptionDetails.forEach((laboratory) => {
-    //   const randomEquipment =
-    //     equipment[Math.floor(Math.random() * equipment.length)];
-    //
-    //   const resource = this.laboratoryEquipmentRepository.create({
-    //     laboratoryEquipeId: randomUUID(),
-    //     laboratory,
-    //     quantity: laboratory.capacity,
-    //     equipment: randomEquipment,
-    //   });
-    //   insertPromises.push(this.laboratoryEquipmentRepository.save(resource));
-    // });
-    //
-    // await Promise.all(insertPromises);
-
+    await Promise.all(insertPromises);
     console.log('Programming  insertados correctamente');
     return true;
   }
 
+  private async insertProgrammingDays(): Promise<boolean> {
+    const insertPromises: Promise<ProgrammingDay>[] = [];
+    const programmingSubscriptionDetails =
+      await this.programmingSubscriptionDetailRepository.find();
+    const dayList = await this.dayRepository.find();
+
+    for (const programming of programmingSubscriptionDetails) {
+      for (const day of dayList) {
+        const programmingDay = this.programmingDayRepository.create({
+          programmingDayId: randomUUID(),
+          day: day,
+          programmingSubscriptionDetail: programming,
+        });
+        insertPromises.push(this.programmingDayRepository.save(programmingDay));
+      }
+    }
+    await Promise.all(insertPromises);
+    console.log('ProgrammingDays insertados correctamente');
+    return true;
+  }
+
+  private async insertProgrammingHours(): Promise<boolean> {
+    const insertPromises: Promise<ProgrammingHours>[] = [];
+    const programmingDays = await this.programmingDayRepository.find();
+    for (const programming of programmingDays) {
+      const randomHous = this.getRandomDateHours();
+      for (const hour of randomHous) {
+        const programmingHour = this.programmingHoursRepository.create({
+          programmingHoursId: randomUUID(),
+          programmingDay: programming,
+          initialHour: hour.startTime,
+          finalHour: hour.endTime,
+          isActive: true,
+        });
+        insertPromises.push(
+          this.programmingHoursRepository.save(programmingHour),
+        );
+      }
+    }
+
+    await Promise.all(insertPromises);
+    console.log('ProgrammingHours insertados correctamente');
+    return true;
+  }
+
   private async generateProgramming(
-    programming: { startDate: Date; endDate: Date }[],
+    subscriptionDetail: SubscriptionDetail,
+    randomProgrammingDates: { startDate: Date; endDate: Date }[],
   ): Promise<boolean> {
+    console.log(subscriptionDetail);
+    for (const programmingDates of randomProgrammingDates) {
+      const programming = this.programmingSubscriptionDetailRepository.create({
+        programmingSubscriptionDetailId: randomUUID(),
+        subscriptionDetail: subscriptionDetail,
+        initialDate: programmingDates.startDate,
+        finalDate: programmingDates.endDate,
+        metadata: {
+          createdBy: 'SYSTEM',
+          lastModifiedBy: 'SYSTEM',
+        },
+        status: StatusProgramming.ACTIVE,
+      });
+      await this.programmingSubscriptionDetailRepository.save(programming);
+    }
     const insertPromises: Promise<SubscriptionDetail>[] = [];
     await Promise.all(insertPromises);
     return true;
@@ -585,28 +640,80 @@ export class SeedsService {
 
   private async deleteAllTables(): Promise<void> {
     /**subscriptions*/
-    await this.subscriptionDetailRepository.deleteAll();
-    await this.parameterRepository.deleteAll();
-    await this.subscriptionRepository.deleteAll();
+    await this.programmingHoursRepository.deleteAll();
+    // await this.programmingDayRepository.deleteAll();
+    // await this.programmingSubscriptionDetailRepository.deleteAll();
+    // await this.subscriptionDetailRepository.deleteAll();
+    // await this.parameterRepository.deleteAll();
+    // await this.subscriptionRepository.deleteAll();
+    // await this.dayRepository.deleteAll();
 
     /** persons */
-    await this.naturalPersonRepository.deleteAll();
-    await this.juridicalPersonRepository.deleteAll();
-    await this.personRepository.deleteAll();
+    // await this.naturalPersonRepository.deleteAll();
+    // await this.juridicalPersonRepository.deleteAll();
+    // await this.personRepository.deleteAll();
     /** register Laboratories */
-    await this.laboratoryEquipmentRepository.deleteAll();
-    await this.laboratoryRepository.deleteAll();
-    await this.serviceRepository.deleteAll();
+    // await this.laboratoryEquipmentRepository.deleteAll();
+    // await this.laboratoryRepository.deleteAll();
+    // await this.serviceRepository.deleteAll();
     /** register Equipment */
-    await this.equipmentResourcesRepository.deleteAll();
-    await this.equipmentRepository.deleteAll();
-    await this.attributeRepository.deleteAll();
+    // await this.equipmentResourcesRepository.deleteAll();
+    // await this.equipmentRepository.deleteAll();
+    // await this.attributeRepository.deleteAll();
     /** others */
-    await this.servicesTypeRepository.deleteAll();
-    await this.attributesTypeRepository.deleteAll();
-    await this.personTypeRepository.deleteAll();
-    await this.documentIdentityTypeRepository.deleteAll();
-    await this.subscriptionsTypeRepository.deleteAll();
+    // await this.servicesTypeRepository.deleteAll();
+    // await this.attributesTypeRepository.deleteAll();
+    // await this.personTypeRepository.deleteAll();
+    // await this.documentIdentityTypeRepository.deleteAll();
+    // await this.subscriptionsTypeRepository.deleteAll();
+  }
+
+  private getRandomDateHours(): { startTime: string; endTime: string }[] {
+    // horario comun
+    const startHour = 7;
+    const endHour = 23;
+    const programmingCount = Math.random() < 0.5 ? 1 : 2; // al azar 1 o 2 , 1 programa de 8 , 2 dos programas de  4horas
+
+    if (programmingCount === 1) {
+      // Una programación de 8 horas
+      const maxStartHour = endHour - 8;
+      const start = this.getRandomInt(startHour, maxStartHour);
+      const end = start + 8;
+
+      return [
+        {
+          startTime: this.formatHour(start),
+          endTime: this.formatHour(end),
+        },
+      ];
+    } else {
+      // Dos programaciones de 4 horas separadas por 2 horas
+      const totalNeededTime = 4 + 2 + 4; // 10 horas
+      const maxStartHour = endHour - totalNeededTime;
+      const firstStart = this.getRandomInt(startHour, maxStartHour);
+      const firstEnd = firstStart + 4;
+      const secondStart = firstEnd + 2;
+      const secondEnd = secondStart + 4;
+
+      return [
+        {
+          startTime: this.formatHour(firstStart),
+          endTime: this.formatHour(firstEnd),
+        },
+        {
+          startTime: this.formatHour(secondStart),
+          endTime: this.formatHour(secondEnd),
+        },
+      ];
+    }
+  }
+
+  private getRandomInt(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  private formatHour(hour: number): string {
+    return `${hour.toString().padStart(2, '0')}:00`;
   }
 
   getRandomAttributeValue(type: string): string {

@@ -20,6 +20,9 @@ import { Subscription } from '../admin-subscriptions/subscriptions/entities/subs
 import { SubscriptionDetail } from '../admin-subscriptions/subscriptions/entities/subscriptionDetail.entity';
 import { Parameter } from '../admin-subscriptions/parameters/entities/parameter.entity';
 import { Day } from '../admin-programming/day/entities/day.entity';
+import { ProgrammingSubscriptionDetail } from '../admin-programming/programming/entities/programming-subscription-detail.entity';
+import { ProgrammingDay } from '../admin-programming/programming/entities/programming-day.entity';
+import { ProgrammingHours } from '../admin-programming/programming/entities/programming-hours.entity';
 
 @Module({
   imports: [
@@ -41,7 +44,10 @@ import { Day } from '../admin-programming/day/entities/day.entity';
       Subscription,
       SubscriptionDetail,
       Parameter,
-      Day
+      Day,
+      ProgrammingSubscriptionDetail,
+      ProgrammingDay,
+      ProgrammingHours,
     ]),
   ],
   controllers: [SeedsController],
