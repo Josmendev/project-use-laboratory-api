@@ -77,30 +77,30 @@ export class SeedsService {
     await this.deleteAllTables();
 
     /** register persons */
-    // await this.insertPersonType();
-    // await this.insertDocumentIdentityType();
-    // await this.inserNaturalPerson();
-    // await this.inserJuridicalPerson();
+    await this.insertPersonType();
+    await this.insertDocumentIdentityType();
+    await this.inserNaturalPerson();
+    await this.inserJuridicalPerson();
 
     /** register Equipment */
-    // await this.insertAttributeTypes();
-    // await this.insertAttributes();
-    // await this.insertEquipment();
-    // await this.insertAttributesToEquipment();
+    await this.insertAttributeTypes();
+    await this.insertAttributes();
+    await this.insertEquipment();
+    await this.insertAttributesToEquipment();
 
     /** register Laboratories */
-    // await this.insertServicesType();
-    // await this.insertLaboratories();
-    // await this.insertLaboratoriesEquipment();
+    await this.insertServicesType();
+    await this.insertLaboratories();
+    await this.insertLaboratoriesEquipment();
 
     /** register subscriptions */
-    // await this.insertSubscriptionsType();
-    // await this.insertSubscriptions();
+    await this.insertSubscriptionsType();
+    await this.insertSubscriptions();
 
     /** register program*/
-    // await this.insertDays();
-    // await this.insertProgrammingSubscription();
-    // await this.insertProgrammingDays();
+    await this.insertDays();
+    await this.insertProgrammingSubscription();
+    await this.insertProgrammingDays();
     await this.insertProgrammingHours();
 
     return 'Seed ejecutado con éxito';
@@ -641,31 +641,31 @@ export class SeedsService {
   private async deleteAllTables(): Promise<void> {
     /**subscriptions*/
     await this.programmingHoursRepository.deleteAll();
-    // await this.programmingDayRepository.deleteAll();
-    // await this.programmingSubscriptionDetailRepository.deleteAll();
-    // await this.subscriptionDetailRepository.deleteAll();
-    // await this.parameterRepository.deleteAll();
-    // await this.subscriptionRepository.deleteAll();
-    // await this.dayRepository.deleteAll();
+    await this.programmingDayRepository.deleteAll();
+    await this.programmingSubscriptionDetailRepository.deleteAll();
+    await this.subscriptionDetailRepository.deleteAll();
+    await this.parameterRepository.deleteAll();
+    await this.subscriptionRepository.deleteAll();
+    await this.dayRepository.deleteAll();
 
     /** persons */
-    // await this.naturalPersonRepository.deleteAll();
-    // await this.juridicalPersonRepository.deleteAll();
-    // await this.personRepository.deleteAll();
+    await this.naturalPersonRepository.deleteAll();
+    await this.juridicalPersonRepository.deleteAll();
+    await this.personRepository.deleteAll();
     /** register Laboratories */
-    // await this.laboratoryEquipmentRepository.deleteAll();
-    // await this.laboratoryRepository.deleteAll();
-    // await this.serviceRepository.deleteAll();
+    await this.laboratoryEquipmentRepository.deleteAll();
+    await this.laboratoryRepository.deleteAll();
+    await this.serviceRepository.deleteAll();
     /** register Equipment */
-    // await this.equipmentResourcesRepository.deleteAll();
-    // await this.equipmentRepository.deleteAll();
-    // await this.attributeRepository.deleteAll();
+    await this.equipmentResourcesRepository.deleteAll();
+    await this.equipmentRepository.deleteAll();
+    await this.attributeRepository.deleteAll();
     /** others */
-    // await this.servicesTypeRepository.deleteAll();
-    // await this.attributesTypeRepository.deleteAll();
-    // await this.personTypeRepository.deleteAll();
-    // await this.documentIdentityTypeRepository.deleteAll();
-    // await this.subscriptionsTypeRepository.deleteAll();
+    await this.servicesTypeRepository.deleteAll();
+    await this.attributesTypeRepository.deleteAll();
+    await this.personTypeRepository.deleteAll();
+    await this.documentIdentityTypeRepository.deleteAll();
+    await this.subscriptionsTypeRepository.deleteAll();
   }
 
   private getRandomDateHours(): { startTime: string; endTime: string }[] {
