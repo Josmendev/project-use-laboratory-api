@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Subscriber } from '../entities/subscriber.entity';
+import { StatusSubscription } from 'src/admin-subscriptions/subscriptions/enums/status-subscription.enum';
 
 @Injectable()
 export class SubscribersService {
@@ -13,7 +14,7 @@ export class SubscribersService {
   // Internal helpers methods
   async findOneByUsername(
     username: string,
-    url: string,
+    url?: string,
   ): Promise<Subscriber | null> {
     const queryBuilder =
       this.subscriberRepository.createQueryBuilder('subscriber');
@@ -23,15 +24,33 @@ export class SubscribersService {
         'subscription.subscriptionsDesigneSetting',
         'subscriptionsDesigneSetting',
       )
-      .where('subscriber.username = :username', { username })
-      .andWhere('subscriptionsDesigneSetting.url = :url', {
+      .where('subscriber.username = :username', { username });
+    if (url)
+      queryBuilder.andWhere('subscriptionsDesigneSetting.url = :url', {
         url,
       });
     const subscriber = await queryBuilder.getOne();
     return subscriber;
   }
 
-  async findOneBySubscriberId(
+  async findOneBySubscriberId(subscriberId: string): Promise<Subscriber> {
+    const queryBuilder =
+      this.subscriberRepository.createQueryBuilder('subscriber');
+    queryBuilder
+      .leftJoinAndSelect('subscriber.subscription', 'subscription')
+      .where('subscriber.subscriberId = :subscriberId', { subscriberId })
+      .andWhere('subscription.status = :status', {
+        status: StatusSubscription.ACTIVE,
+      });
+    const subscriber = await queryBuilder.getOne();
+    if (!subscriber)
+      throw new NotFoundException(
+        `No se encuentra el usuario con id: ${subscriberId}`,
+      );
+    return subscriber;
+  }
+
+  async findOneBySubscriberIdWithLogin(
     subscriberId: string,
   ): Promise<Subscriber | null> {
     const queryBuilder =
@@ -48,6 +67,10 @@ export class SubscribersService {
       .leftJoinAndSelect('personInformation.informationType', 'informationType')
       // subscription relations
       .leftJoinAndSelect('subscription.parameters', 'parameters')
+      .leftJoinAndSelect(
+        'subscription.subscriptionsDesigneSetting',
+        'subscriptionsDesigneSetting',
+      )
       .leftJoinAndSelect('subscription.person', 'person')
       .leftJoinAndSelect('person.documentIdentityType', 'documentIdentityType')
       .leftJoinAndSelect('person.personType', 'personType')
@@ -68,7 +91,7 @@ export class SubscribersService {
       .leftJoinAndSelect('subscriberRoles.role', 'role')
       .where('subscriber.subscriberId = :subscriberId', { subscriberId });
     const subscriber = await queryBuilder.getOne();
-    console.log(subscriber);
+    // console.log(subscriber);
     return subscriber;
   }
 }

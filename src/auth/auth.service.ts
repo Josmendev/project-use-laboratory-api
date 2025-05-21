@@ -39,7 +39,8 @@ export class AuthService {
 
   // Internal helpers methods
   async validateUser(id: string): Promise<ValidateUserResponseDto | null> {
-    const user = await this.subscribersService.findOneBySubscriberId(id);
+    const user =
+      await this.subscribersService.findOneBySubscriberIdWithLogin(id);
     if (!user) throw new UnauthorizedException(`Token no válido`);
     if (user.subscription.status !== StatusSubscription.ACTIVE)
       throw new UnauthorizedException(

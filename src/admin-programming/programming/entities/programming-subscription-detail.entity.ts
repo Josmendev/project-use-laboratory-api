@@ -1,8 +1,14 @@
 import { SubscriptionDetail } from 'src/admin-subscriptions/subscriptions/entities/subscriptionDetail.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Programming } from './programming.entity';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { StatusProgramming } from '../enums/status-programming.enum';
 import { Timestamped } from 'src/common/entities/timestamped.entity';
+import { ProgrammingDay } from './programming-day.entity';
 
 @Entity()
 export class ProgrammingSubscriptionDetail extends Timestamped {
@@ -15,11 +21,11 @@ export class ProgrammingSubscriptionDetail extends Timestamped {
   )
   subscriptionDetail: SubscriptionDetail;
 
-  @ManyToOne(
-    () => Programming,
-    (programming) => programming.programmingSubscriptionDetail,
+  @OneToMany(
+    () => ProgrammingDay,
+    (programmingDay) => programmingDay.programmingSubscriptionDetail,
   )
-  programming: Programming;
+  programmingDay: ProgrammingDay[];
 
   @Column({
     type: 'datetime',

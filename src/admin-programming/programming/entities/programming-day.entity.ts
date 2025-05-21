@@ -1,8 +1,8 @@
 import { Day } from 'src/admin-programming/day/entities/day.entity';
 import { Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Programming } from './programming.entity';
 import { Timestamped } from 'src/common/entities/timestamped.entity';
 import { ProgrammingHours } from './programming-hours.entity';
+import { ProgrammingSubscriptionDetail } from './programming-subscription-detail.entity';
 
 @Entity()
 export class ProgrammingDay extends Timestamped {
@@ -18,6 +18,6 @@ export class ProgrammingDay extends Timestamped {
   )
   hours: ProgrammingHours[];
 
-  @ManyToOne(() => Programming, (programming) => programming.programmingDay)
-  programming: Programming;
+  @ManyToOne(() => ProgrammingSubscriptionDetail, (psd) => psd.programmingDay)
+  programmingSubscriptionDetail: ProgrammingSubscriptionDetail;
 }

@@ -12,6 +12,7 @@ import { ReservationLaboratoryEquipment } from 'src/reservations/entities/reserv
 
 @Entity()
 export class LaboratoryEquipment extends Timestamped {
+  [x: string]: any;
   @PrimaryGeneratedColumn('uuid')
   laboratoryEquipeId: string;
 

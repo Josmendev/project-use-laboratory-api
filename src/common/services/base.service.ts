@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository } from 'typeorm';
 import { PaginationDto } from '../dto/pagination.dto';
 import { Paginated } from '../interfaces/paginated.interface';
 import { paginate } from '../helpers/paginate.helper';
@@ -8,38 +8,31 @@ import { paginate } from '../helpers/paginate.helper';
 export abstract class BaseService<T extends object> {
   constructor(private readonly repository: Repository<T>) {}
 
-  async findAllBase(
+  async findAllBase<R>(
+    data: R[],
     paginationDto: PaginationDto,
-    alias: string,
-    formatResponse: (entity: T) => any,
-    buildQueryBuilder?: (queryBuilder: SelectQueryBuilder<T>) => void,
-  ): Promise<Paginated<any>> {
-    const queryBuilder = this.repository.createQueryBuilder(alias);
-    if (buildQueryBuilder) buildQueryBuilder(queryBuilder);
-    const result = await paginate(queryBuilder, paginationDto);
-    return {
-      ...result,
-      data: result.data.map(formatResponse),
-    };
+  ): Promise<Paginated<R>> {
+    return await paginate(data, paginationDto);
   }
 
-  async searchBase(
+  async searchBase<R>(
+    data: R[],
     term: string,
     paginationDto: PaginationDto,
-    alias: string,
-    formatResponse: (entity: T) => any,
-    buildQueryBuilder?: (
-      queryBuilder: SelectQueryBuilder<T>,
-      searchTerm: string,
-    ) => void,
-  ): Promise<Paginated<any>> {
-    const queryBuilder = this.repository.createQueryBuilder(alias);
-    buildQueryBuilder?.(queryBuilder, term);
-    const result = await paginate(queryBuilder, paginationDto);
-    return {
-      ...result,
-      data: result.data.map(formatResponse),
-    };
+    searchFields: (keyof R)[],
+  ): Promise<Paginated<R>> {
+    const normalizedTerm = term.toLowerCase().trim();
+
+    const filtered = data.filter((item) =>
+      searchFields.some((field) => {
+        const value = item[field];
+        return (
+          typeof value === 'string' &&
+          value.toLowerCase().includes(normalizedTerm)
+        );
+      }),
+    );
+    return await paginate(filtered, paginationDto);
   }
 
   async deleteAll(): Promise<void> {
