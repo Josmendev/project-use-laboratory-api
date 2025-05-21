@@ -12,44 +12,38 @@ export class ReservationsService {
   ) {}
 
   async checkAvailability(
-    laboratoryId: string,
-    date: Date,
-    startTime: string,
-    endTime: string,
-    equipmentQuantity: number,
-  ): Promise<boolean> {
-    const startDateTime = new Date(
-      `${date.toISOString().split('T')[0]}T${startTime}`,
-    );
-    const endDateTime = new Date(
-      `${date.toISOString().split('T')[0]}T${endTime}`,
-    );
-
-    const activeReservations = await this.reservationRepository
-      .createQueryBuilder('reservation')
-      .innerJoin(
-        'reservation.reservationLaboratoryEquipment',
-        'reservationLaboratoryEquipment',
-      )
-      .innerJoin(
-        'reservationLaboratoryEquipment.laboratoryEquipment',
-        'equipment',
-      )
-      .innerJoin('equipment.laboratory', 'laboratory')
-      .where('laboratory.laboratoryId = :laboratoryId', { laboratoryId })
-      .andWhere('reservation.status != :status', {
+    labEquipmentId: string,
+    date: string,
+    initialHour: string,
+    finalHour: string,
+  ): Promise<number> {
+    return this.reservationRepository
+      .createQueryBuilder('rr')
+      .innerJoinAndSelect('rr.reservationLaboratoryEquipment', 'rle')
+      .innerJoinAndSelect('rle.laboratoryEquipment', 'leJoined')
+      .where('leJoined.laboratoryEquipeId = :labEquipmentId', {
+        labEquipmentId,
+      })
+      .andWhere('rle.status = :status', {
         status: StatusReservation.PENDING,
       })
+      .andWhere('rle.reservationDate = :date', {
+        date,
+      })
       .andWhere(
-        `
-        (
-          (reservation.initialHourDate < :endDateTime AND reservation.finalHourDate > :startDateTime)
-        )
-      `,
-        { startDateTime, endDateTime },
+        `(
+          (rle.initialHour <= rle.finalHour AND
+          :initialHour < rle.finalHour AND
+          :finalHour > rle.initialHour)
+          OR
+          (rle.initialHour > rle.finalHour AND
+          (:initialHour < rle.finalHour OR :finalHour > rle.initialHour))
+        )`,
+        {
+          initialHour,
+          finalHour,
+        },
       )
       .getCount();
-
-    return activeReservations < equipmentQuantity;
   }
 }

@@ -1,6 +1,8 @@
+import { OperationTime } from '../interfaces/operation-time.interface';
+
 export class LaboratoryDisponibilityResponseDto {
   laboratoryId: string;
   description: string;
-  operationTime: Array<{ start: string; end: string }>;
+  operationTime: OperationTime[];
   resources: (string | undefined)[];
 }

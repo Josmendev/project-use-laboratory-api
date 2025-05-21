@@ -1,17 +1,16 @@
-import { Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginClientDto } from './dto/login-client.dto';
 import { Auth } from './decorators/auth.decorator';
 import { GetUser } from './decorators/get-user.decorator';
 import { Subscriber } from 'src/admin-subscriptions/subscribers/entities/subscriber.entity';
-// import { ValidateUserResponseDto } from './dto/validate-user-response.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login-client')
-  login(@Query() loginClientDto: LoginClientDto) {
+  login(@Body() loginClientDto: LoginClientDto) {
     return this.authService.loginClient(loginClientDto);
   }
 
