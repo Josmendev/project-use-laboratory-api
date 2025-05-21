@@ -3,6 +3,7 @@ import { ValidateUserResponseDto } from '../dto/validate-user-response.dto';
 import { NaturalPersonResponseDto } from 'src/admin-persons/natural-persons/dto/natural-person-response.dto';
 import { ParameterResponseDto } from 'src/admin-subscriptions/parameters/dto/parameter-response.dto';
 import { generateTimeSlots } from 'src/admin-subscriptions/parameters/helpers/generate-time-slots.helper';
+import { SubscriptionsDesigneSettingsResponseDto } from 'src/admin-subscriptions/subscriptions-designe-settings/dto/subscriptions-designe-settings-response.dto';
 
 export const formatValidateUserResponse = (
   subscriber: Subscriber | null,
@@ -48,6 +49,28 @@ export const formatValidateUserResponse = (
     ),
   };
 
+  const subscriptionDesigneSetting =
+    subscriber.subscription?.subscriptionsDesigneSetting;
+  const subscriptionDesign: SubscriptionsDesigneSettingsResponseDto = {
+    subscriptionsDesigneSettingId:
+      subscriptionDesigneSetting?.subscribersDesigneSettingId,
+    url: subscriptionDesigneSetting?.url,
+    brandOne: subscriptionDesigneSetting?.brandOne,
+    brandTwo: subscriptionDesigneSetting?.brandTwo,
+    brandThree: subscriptionDesigneSetting?.brandThree,
+    brandFour: subscriptionDesigneSetting?.brandFour,
+    primaryColor: subscriptionDesigneSetting?.primaryColor,
+    secondaryColor: subscriptionDesigneSetting?.secondaryColor,
+    baseColor: subscriptionDesigneSetting?.baseColor,
+    infoColor: subscriptionDesigneSetting?.infoColor,
+    warningColor: subscriptionDesigneSetting?.warningColor,
+    successColor: subscriptionDesigneSetting?.successColor,
+    errorColor: subscriptionDesigneSetting?.errorColor,
+    lightColor: subscriptionDesigneSetting?.lightColor,
+    darkColor: subscriptionDesigneSetting?.darkColor,
+    letterFont: subscriptionDesigneSetting?.letterFont,
+  };
+
   // 4. Persona de la SUSCRIPCIÓN (condicional según joins)
   const subscriptionPerson = subscriber.subscription?.person;
   const subscriptionPersonResponse = {
@@ -79,6 +102,7 @@ export const formatValidateUserResponse = (
       initialDate: subscriber.subscription?.initialDate?.toISOString(),
       finalDate: subscriber.subscription?.finalDate?.toISOString(),
       parameter: parameterResponse,
+      subscriptionDesign,
       person: subscriptionPersonResponse,
     },
   };

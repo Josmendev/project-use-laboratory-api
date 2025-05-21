@@ -67,6 +67,10 @@ export class SubscribersService {
       .leftJoinAndSelect('personInformation.informationType', 'informationType')
       // subscription relations
       .leftJoinAndSelect('subscription.parameters', 'parameters')
+      .leftJoinAndSelect(
+        'subscription.subscriptionsDesigneSetting',
+        'subscriptionsDesigneSetting',
+      )
       .leftJoinAndSelect('subscription.person', 'person')
       .leftJoinAndSelect('person.documentIdentityType', 'documentIdentityType')
       .leftJoinAndSelect('person.personType', 'personType')
