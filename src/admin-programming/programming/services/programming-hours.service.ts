@@ -18,25 +18,38 @@ export class ProgrammingHoursService {
 
   async validateHoursDisponibility(
     validateHoursDisponibilityDto: ValidateHoursDisponibilityDto,
+    userId: string,
   ) {
-    const { dayOfWeek, date, initialHour, finalHour, subscriptionId } =
-      validateHoursDisponibilityDto;
+    const {
+      dayOfWeek,
+      date,
+      initialHour,
+      finalHour,
+      subscriptionId,
+      numberReservationDays,
+    } = validateHoursDisponibilityDto;
     const queryDate = new Date(date);
     const initialHourString = `${initialHour}:00`;
     const finalHourString = `${finalHour}:00`;
     const queryDateFormatted = queryDate.toISOString().split('T')[0];
+    // Validacion del numero de reservas
+    await this.reservationsService.hasUserReachedReservationLimit(
+      userId,
+      queryDateFormatted,
+      numberReservationDays,
+    );
     try {
-      // 1. Obtener slots disponibles sin considerar reservas
       const availableSlots = await this.programmingHoursRepository
         .createQueryBuilder('hours')
         .innerJoinAndSelect('hours.programmingDay', 'programmingDay')
         .innerJoinAndSelect('programmingDay.day', 'day')
-        .innerJoinAndSelect('programmingDay.programming', 'programming')
-        .innerJoinAndSelect('programming.programmingSubscriptionDetail', 'psd')
+        .innerJoinAndSelect(
+          'programmingDay.programmingSubscriptionDetail',
+          'psd',
+        )
         .innerJoinAndSelect('psd.subscriptionDetail', 'sd')
         .innerJoinAndSelect('sd.service', 'service')
-        .leftJoinAndSelect('service.subscriptionDetail', 'subscriptionDetail')
-        .leftJoinAndSelect('subscriptionDetail.subscription', 'subscription')
+        .leftJoinAndSelect('sd.subscription', 'subscription')
         .innerJoinAndSelect('service.laboratory', 'laboratory')
         .innerJoinAndSelect('laboratory.laboratoryEquipment', 'labEquipment')
         .leftJoinAndSelect('labEquipment.equipment', 'equipment')
@@ -63,6 +76,8 @@ export class ProgrammingHoursService {
           { initialHour: initialHourString, finalHour: finalHourString },
         )
         .getMany();
+
+      console.log('estoy por aqui');
 
       // 2. Verificar disponibilidad para cada slot
       const resultWithAvailability = await this.getAvailableSlots(
@@ -94,8 +109,8 @@ export class ProgrammingHoursService {
     return await Promise.all(
       availableSlots.map(async (slot) => {
         const lab =
-          slot.programmingDay.programming.programmingSubscriptionDetail[0]
-            .subscriptionDetail.service.laboratory;
+          slot.programmingDay.programmingSubscriptionDetail.subscriptionDetail
+            .service.laboratory;
 
         const equipmentWithAvailability = await Promise.all(
           lab.laboratoryEquipment.map(async (le) => {

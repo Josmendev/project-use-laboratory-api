@@ -14,7 +14,7 @@ export class SubscribersService {
   // Internal helpers methods
   async findOneByUsername(
     username: string,
-    url: string,
+    url?: string,
   ): Promise<Subscriber | null> {
     const queryBuilder =
       this.subscriberRepository.createQueryBuilder('subscriber');
@@ -24,8 +24,9 @@ export class SubscribersService {
         'subscription.subscriptionsDesigneSetting',
         'subscriptionsDesigneSetting',
       )
-      .where('subscriber.username = :username', { username })
-      .andWhere('subscriptionsDesigneSetting.url = :url', {
+      .where('subscriber.username = :username', { username });
+    if (url)
+      queryBuilder.andWhere('subscriptionsDesigneSetting.url = :url', {
         url,
       });
     const subscriber = await queryBuilder.getOne();

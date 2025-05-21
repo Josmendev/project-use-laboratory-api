@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Reservation } from './entities/reservation.entity';
 import { Repository } from 'typeorm';
@@ -45,5 +45,31 @@ export class ReservationsService {
         },
       )
       .getCount();
+  }
+
+  async hasUserReachedReservationLimit(
+    userId: string,
+    date: string,
+    numberReservationDays: number,
+  ): Promise<void> {
+    const reservationsCount = await this.reservationRepository
+      .createQueryBuilder('reservation')
+      .leftJoin('reservation.subscriber', 'subscriber')
+      .leftJoin(
+        'reservation.reservationLaboratoryEquipment',
+        'reservationLaboratoryEquipment',
+      )
+      .where('subscriber.subscriberId = :userId', { userId })
+      .andWhere('reservationLaboratoryEquipment.reservationDate = :date', {
+        date,
+      })
+      .andWhere('reservationLaboratoryEquipment.status IN (:...statuses)', {
+        statuses: [StatusReservation.PENDING],
+      })
+      .getCount();
+    if (reservationsCount >= numberReservationDays)
+      throw new BadRequestException(
+        `El usuario ha alcanzado el límite de reservas para la fecha: ${date}`,
+      );
   }
 }

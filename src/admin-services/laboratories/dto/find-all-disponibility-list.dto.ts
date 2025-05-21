@@ -19,5 +19,19 @@ export class FindAllDisponibilityListDto {
 
   @IsInt({ message: 'El campo tiempo de reserva debe ser un número' })
   @IsNotEmpty({ message: 'El campo tiempo de reserva no puede estar vacío' })
-  revervationTime: number;
+  reservationTime: number;
+
+  @IsInt({ message: 'El campo tiempo máximo de reserva debe ser un número' })
+  @IsNotEmpty({
+    message: 'El campo tiempo máximo de reserva no puede estar vacío',
+  })
+  maximumReservationTime: number;
+
+  @IsInt({
+    message: 'El campo numero de reservas por dia máximo debe ser un número',
+  })
+  @IsNotEmpty({
+    message: 'El campo numero de reservas por dia máximo no puede estar vacío',
+  })
+  numberReservationDays: number;
 }
