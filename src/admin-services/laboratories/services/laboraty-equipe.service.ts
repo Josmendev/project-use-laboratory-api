@@ -13,6 +13,8 @@ import { ProgrammingHoursService } from '../../../admin-programming/programming/
 import { LaboratoryDisponibilityResponseDto } from '../dto/laboratories-disponibility-response.dto';
 import { Paginated } from '../../../common/interfaces/paginated.interface';
 import { BaseService } from 'src/common/services/base.service';
+import { formatResourcesLaboratoryEquipmentResponse } from '../helpers/format-resources-laboratories-equipemnt-response.helper';
+import { ResourcesLaboratoryResponse } from '../interfaces/resources-laboratories-response.interface';
 
 @Injectable()
 export class LaboratoryEquipeService extends BaseService<LaboratoryEquipment> {
@@ -72,11 +74,12 @@ export class LaboratoryEquipeService extends BaseService<LaboratoryEquipment> {
     return await this.findAllBase(laboratoriesDisponibility, paginationDto);
   }
 
-  async findOneById(id: string) {
+  async findOneById(id: string): Promise<ResourcesLaboratoryResponse> {
     const laboratoryEquipment =
       await this.laboratoryEquipmentRepository.findOne({
         where: { laboratoryEquipeId: id },
         relations: [
+          'laboratory',
           'equipment',
           'equipment.equipmentResources',
           'equipment.equipmentResources.attribute',
@@ -86,7 +89,7 @@ export class LaboratoryEquipeService extends BaseService<LaboratoryEquipment> {
       throw new NotFoundException(
         `No se ha encontrado el laboratorio con id ${id}`,
       );
-    return laboratoryEquipment;
+    return formatResourcesLaboratoryEquipmentResponse(laboratoryEquipment);
   }
 
   // Internal helpers methods
