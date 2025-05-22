@@ -1,5 +1,12 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsDateString,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+} from 'class-validator';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 export class FindAllDisponibilityListDto extends PaginationDto {
@@ -12,14 +19,25 @@ export class FindAllDisponibilityListDto extends PaginationDto {
   @IsNotEmpty({ message: 'El campo día de la semana no puede estar vacío' })
   dayOfWeek: string;
 
-  @IsString({ message: 'El campo fecha debe ser una cadena de caracteres' })
-  @IsNotEmpty({ message: 'El campo fecha no puede estar vacío' })
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
+    message: 'La fecha debe estar en formato YYYY-MM-DD',
+  })
+  @IsDateString(
+    {},
+    {
+      message: 'La fecha debe estar en formato YYYY-MM-DD',
+    },
+  )
+  @IsNotEmpty({
+    message: 'La fecha no puede estar vacía',
+  })
   date: string;
 
-  @IsString({
-    message: 'El campo hora inicial debe ser una cadena de caracteres',
+  @IsString({ message: 'La fecha no puede estar vacía' })
+  @IsNotEmpty({ message: 'La hora inicial no puede estar vacío' })
+  @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/, {
+    message: 'La hora inicial debe estar en formato HH:mm',
   })
-  @IsNotEmpty({ message: 'El campo hora inicial no puede estar vacío' })
   initialHour: string;
 
   @Type(() => Number)

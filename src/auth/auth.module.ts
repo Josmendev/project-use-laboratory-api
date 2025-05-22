@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { SubscribersModule } from 'src/admin-subscriptions/subscribers/subscribers.module';
@@ -11,7 +11,7 @@ import { JwtAdapter } from 'src/common/adapters/jwt.adapter';
 
 @Module({
   imports: [
-    SubscribersModule,
+    forwardRef(() => SubscribersModule),
     CommonModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({

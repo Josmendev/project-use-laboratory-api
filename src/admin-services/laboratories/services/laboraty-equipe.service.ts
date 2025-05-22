@@ -13,8 +13,8 @@ import { ProgrammingHoursService } from '../../../admin-programming/programming/
 import { LaboratoryDisponibilityResponseDto } from '../dto/laboratories-disponibility-response.dto';
 import { Paginated } from '../../../common/interfaces/paginated.interface';
 import { BaseService } from 'src/common/services/base.service';
-import { formatResourcesLaboratoryEquipmentResponse } from '../helpers/format-resources-laboratories-equipemnt-response.helper';
 import { ResourcesLaboratoryResponse } from '../interfaces/resources-laboratories-response.interface';
+import { formatResourcesLaboratoryEquipmentResponse } from '../helpers/format-resources-laboratories-equipemnt-response.helper';
 
 @Injectable()
 export class LaboratoryEquipeService extends BaseService<LaboratoryEquipment> {
@@ -22,7 +22,7 @@ export class LaboratoryEquipeService extends BaseService<LaboratoryEquipment> {
     @InjectRepository(LaboratoryEquipment)
     private readonly laboratoryEquipmentRepository: Repository<LaboratoryEquipment>,
     private readonly subscriberService: SubscribersService,
-    private readonly ProgrammingHoursService: ProgrammingHoursService,
+    private readonly programmingHoursService: ProgrammingHoursService,
   ) {
     super(laboratoryEquipmentRepository);
   }
@@ -51,7 +51,7 @@ export class LaboratoryEquipeService extends BaseService<LaboratoryEquipment> {
     const { subscription } = subscriber;
     const { subscriptionId } = subscription;
     const laboratoriesDisponibility =
-      await this.ProgrammingHoursService.validateHoursDisponibility(
+      await this.programmingHoursService.validateHoursDisponibility(
         {
           dayOfWeek,
           date,

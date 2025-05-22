@@ -1,20 +1,33 @@
-export const generateTimeSlots = (minutes: number): string[] => {
+export const generateTimeSlots = (totalDurationMinutes: number): string[] => {
   const slots: string[] = [];
-  const interval = 30; // Intervalo base de 30 minutos
-  let currentMinutes = 0;
+  const interval = 30; // Intervalo en minutos
 
-  // Siempre agregamos el primer intervalo de 30 minutos
-  slots.push(formatTime(currentMinutes + interval));
+  let currentTime = 0; // Representa los minutos actuales en la iteración
 
-  // Continuamos agregando intervalos hasta alcanzar o superar los minutos requeridos
-  while (currentMinutes + interval < minutes) {
-    currentMinutes += interval;
-    slots.push(formatTime(currentMinutes + interval));
+  // Generar slots cada 'interval' minutos hasta alcanzar o superar la duración total
+  while (currentTime < totalDurationMinutes) {
+    currentTime += interval;
+    if (currentTime <= totalDurationMinutes) {
+      slots.push(formatTime(currentTime));
+    }
   }
+  const lastSlotMinutes =
+    slots.length > 0
+      ? parseInt(slots[slots.length - 1].substring(0, 2)) * 60 +
+        parseInt(slots[slots.length - 1].substring(3, 5))
+      : 0;
 
-  // Agregamos el tiempo exacto si no es múltiplo de 30
-  if (minutes % interval !== 0 && currentMinutes + interval > minutes) {
-    slots.push(formatTime(minutes));
+  if (
+    totalDurationMinutes % interval !== 0 &&
+    totalDurationMinutes > lastSlotMinutes
+  ) {
+    slots.push(formatTime(totalDurationMinutes));
+  } else if (
+    totalDurationMinutes % interval === 0 &&
+    lastSlotMinutes === totalDurationMinutes &&
+    !slots.includes(formatTime(totalDurationMinutes))
+  ) {
+    slots.push(formatTime(totalDurationMinutes));
   }
 
   return slots;

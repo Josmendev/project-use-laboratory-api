@@ -40,6 +40,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
         `El valor ingresado '${duplicateValue}' ya se encuentra registrado`,
       ];
     }
+    if (errno === 1364) {
+      // Error de duplicado de entrada (clave única)
+      status = HttpStatus.BAD_REQUEST;
+      const match = sqlMessage;
+      // Mensaje de error para duplicado de clave
+      message = [`Error: '${match}'`];
+    }
 
     this.logger.error(`HTTP ${status} Error: ${JSON.stringify(message)}`);
 
