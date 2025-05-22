@@ -40,9 +40,9 @@ export const formatValidateUserResponse = (
     description: subscriber.subscription?.parameters?.description,
     numberReservationDays:
       subscriber.subscription?.parameters?.numberReservationDay,
-    miniumNumberMinutes:
+    maxiumNumberMinutes:
       subscriber.subscription?.parameters?.miniumNumberMinutes,
-    rangeBeetweenReservations:
+    rangeBetweenReservations:
       subscriber.subscription?.parameters?.rangeBetweenReservations,
     reservationTime: generateTimeSlots(
       subscriber.subscription?.parameters?.miniumNumberMinutes,
