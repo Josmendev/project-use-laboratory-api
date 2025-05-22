@@ -13,7 +13,8 @@ import { SeedSubscription } from './admin-subscriptions/seed-subscription.interf
 import { SeedRole } from './admin-subscriptions/seed-role.interface';
 import { SeedTechnicalSupport } from './admin-services/seed-technical-support';
 import { SeedSubscriptionsDesigneSetting } from './admin-subscriptions/seed-subscriptions-designe-setting';
-import { SeedSubscriber} from './admin-subscriptions/seed-subscriber.interface';
+import { SeedSubscriber } from './admin-subscriptions/seed-subscriber.interface';
+import { SeedInformationType } from './admin-persons/seed-information-type.interface';
 
 export interface SeedData {
   personTypes: SeedPersonType[];
@@ -32,4 +33,5 @@ export interface SeedData {
   technicalSupports: SeedTechnicalSupport[];
   subscriptionsDesigneSettings: SeedSubscriptionsDesigneSetting[];
   subscriber: SeedSubscriber[];
+  informationTypes: SeedInformationType[];
 }
