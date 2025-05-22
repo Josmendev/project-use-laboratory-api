@@ -11,6 +11,10 @@ interface EnvsVars {
   DB_NAME: string;
   DB_SYNCHRONIZE: boolean;
   JWT_SECRET: string;
+  EMAIL_HOST: string;
+  EMAIL_PORT: number;
+  EMAIL_USER: string;
+  EMAIL_PASS: string;
 }
 
 const envsSchema = joi
@@ -51,5 +55,11 @@ export const envs = {
   },
   jwt: {
     secret: envVars.JWT_SECRET,
+  },
+  email: {
+    host: envVars.EMAIL_HOST,
+    port: envVars.EMAIL_PORT,
+    user: envVars.EMAIL_USER,
+    pass: envVars.EMAIL_PASS,
   },
 };

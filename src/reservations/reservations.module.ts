@@ -9,6 +9,7 @@ import { SubscribersModule } from 'src/admin-subscriptions/subscribers/subscribe
 import { AuthModule } from 'src/auth/auth.module';
 import { LaboratoriesModule } from 'src/admin-services/laboratories/laboratories.module';
 import { ProgrammingModule } from 'src/admin-programming/programming/programming.module';
+import { EmailsModule } from 'src/emails/emails.module';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { ProgrammingModule } from 'src/admin-programming/programming/programming
     forwardRef(() => LaboratoriesModule),
     SubscribersModule,
     AuthModule,
-    // AuthModule,
+    EmailsModule,
   ],
   controllers: [ReservationsController],
   providers: [ReservationsService, ReservationLaboratoryEquipmentService],

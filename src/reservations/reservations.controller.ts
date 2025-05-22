@@ -17,7 +17,7 @@ export class ReservationsController {
     @Body() createReservationDto: CreateReservationDto,
   ) {
     return this.reservationsService.createReservation(
-      user.subscriberId,
+      user,
       createReservationDto,
     );
   }

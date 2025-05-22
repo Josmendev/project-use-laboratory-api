@@ -2,6 +2,7 @@ import { ReservationDetailResponse } from './reservation-detail-response.interfa
 
 export interface ReservationResponse {
   reservationId: string;
+  createdAt: string;
   subscriber: {
     subscriberId: string;
     username: string;

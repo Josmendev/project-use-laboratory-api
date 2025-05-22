@@ -6,6 +6,7 @@ export const formatReservationResponse = (
 ): ReservationResponse => {
   return {
     reservationId: reservation.reservationId,
+    createdAt: reservation.createdAt.toISOString(),
     subscriber: {
       subscriberId: reservation.subscriber.subscriberId,
       username: reservation.subscriber.username,

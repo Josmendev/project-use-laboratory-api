@@ -26,6 +26,11 @@ import { Paginated } from 'src/common/interfaces/paginated.interface';
 import { FindAllByStatusDto } from '../dto/find-all-by-status.dto';
 import { ReservationFindAllByStatusResponse } from '../interfaces/reservation-find-all-by-status.interface';
 import { findAllByStatusResponse } from '../helpers/find-all-by-status-response.helper';
+import { ResourcesLaboratoryResponse } from 'src/admin-services/laboratories/interfaces/resources-laboratories-response.interface';
+import { EmailsService } from 'src/emails/emails.service';
+import { buildLabReservationEmail } from 'src/emails/templates/build-lab-reservation-email.template';
+import { formatDateToSpanish } from '../helpers/format-date-to-spanish.helper';
+import { ValidateUserResponseDto } from 'src/auth/dto/validate-user-response.dto';
 
 @Injectable()
 export class ReservationsService {
@@ -36,23 +41,29 @@ export class ReservationsService {
     private readonly laboratoryEquipeService: LaboratoryEquipeService,
     @Inject(forwardRef(() => ProgrammingHoursService))
     private readonly programmingHoursService: ProgrammingHoursService,
-    @Inject(forwardRef(() => LaboratoryEquipeService))
-    private readonly laboratyEquipeService: LaboratoryEquipeService,
     private readonly subscriberService: SubscribersService,
     private readonly reservationLaboratoryEquipmentService: ReservationLaboratoryEquipmentService,
+    private readonly emailsService: EmailsService,
   ) {}
 
   // Methods for endpoints
   // CLI
   async createReservation(
-    userId: string,
+    user: ValidateUserResponseDto,
     createReservationDetailDto: CreateReservationDto,
-  ): Promise<ReservationResponse> {
-    const user = await this.subscriberService.findOneBySubscriberId(userId);
+  ): Promise<ReservationResponse | undefined> {
+    const userValidate = await this.subscriberService.findOneBySubscriberId(
+      user.subscriberId,
+    );
     const { metadata, reservationDetails } = createReservationDetailDto;
     await Promise.all(
       reservationDetails.map(async (detail, index) =>
-        this.validateReservationDetail(detail, index, user, userId),
+        this.validateReservationDetail(
+          detail,
+          index,
+          userValidate,
+          user.subscriberId,
+        ),
       ),
     );
     const reservation = this.reservationRepository.create({
@@ -68,7 +79,9 @@ export class ReservationsService {
       ),
     });
     const reservationSaved = await this.reservationRepository.save(reservation);
-    return formatReservationResponse(reservationSaved);
+    const reservationFormatted = formatReservationResponse(reservationSaved);
+    await this.sendEmailForConfirmationReservation(reservationFormatted, user);
+    return reservationFormatted;
   }
 
   async findAllByStatus(
@@ -95,7 +108,9 @@ export class ReservationsService {
     );
   }
 
-  async findOneByIdEquipmentWithReservation(id: string) {
+  async findOneByIdEquipmentWithReservation(
+    id: string,
+  ): Promise<ResourcesLaboratoryResponse> {
     return await this.laboratoryEquipeService.findOneById(id);
   }
 
@@ -197,5 +212,47 @@ export class ReservationsService {
         `El laboratorio no se encuentra disponible para la fecha seleccionada ${detail.date} y hora seleccionada ${detail.initialHour} - ${detail.finalHour}`,
       );
     }
+  }
+
+  private async sendEmailForConfirmationReservation(
+    reservation: ReservationResponse,
+    user: ValidateUserResponseDto,
+  ) {
+    const { reservationLaboratoryEquipment } = reservation;
+    await this.emailsService.sendEmail({
+      from: 'emailempresa@gmail.com',
+      to: user.naturalPerson.personInformation[0].description,
+      subject: 'Confirmación de Reserva',
+      // html: 'Reserva confirmada',
+      html: buildLabReservationEmail({
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+        companyName: user.subscription.person.fullName,
+        logoUrl: user.subscription.subscriptionDesign?.brandOne ?? '',
+        userName:
+          user.naturalPerson.fullName +
+          ' ' +
+          user.naturalPerson.paternalSurname +
+          ' ' +
+          user.naturalPerson.maternalSurname,
+        reservationDate: formatDateToSpanish(reservation.createdAt),
+        details: await Promise.all(
+          reservationLaboratoryEquipment.map(async (rle) => {
+            const summaryLaboratoryEquipment =
+              await this.laboratoryEquipeService.findOneSummaryById(
+                rle.laboratoryEquipment.laboratoryEquipeId,
+              );
+            return {
+              labDescription: summaryLaboratoryEquipment.laboratory,
+              equipmentDescription: summaryLaboratoryEquipment.equipment,
+              date: formatDateToSpanish(rle.reservationDate.toISOString()),
+              startTime: rle.initialHour,
+              endTime: rle.finalHour,
+            };
+          }),
+        ),
+        primaryColor:
+          user.subscription.subscriptionDesign?.primaryColor ?? '#fff',
+      }),
+    });
   }
 }

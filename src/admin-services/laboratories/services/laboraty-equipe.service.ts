@@ -14,6 +14,8 @@ import { formatResourcesLaboratoryEquipmentResponse } from '../helpers/format-re
 import { isValidDayOfWeek } from 'src/common/helpers/is-valid-day-of-week.helper';
 import { isValidDate } from '../helpers/is-valid-date.helper';
 import { isValidReservationTime } from '../helpers/is-valid-reservation-time.helper';
+import { SummaryLaboratoryEquipmentResponse } from '../interfaces/summary-laboratories-equipment.interface';
+import { formatSummaryLaboratoryEquipmentResponse } from '../helpers/format-summary-laboratories-equipment.helper';
 
 @Injectable()
 export class LaboratoryEquipeService extends BaseService<LaboratoryEquipment> {
@@ -90,5 +92,25 @@ export class LaboratoryEquipeService extends BaseService<LaboratoryEquipment> {
         `No se ha encontrado el laboratorio con id ${id}`,
       );
     return formatResourcesLaboratoryEquipmentResponse(laboratoryEquipment);
+  }
+
+  async findOneSummaryById(
+    id: string,
+  ): Promise<SummaryLaboratoryEquipmentResponse> {
+    const laboratoryEquipment =
+      await this.laboratoryEquipmentRepository.findOne({
+        where: { laboratoryEquipeId: id },
+        relations: [
+          'laboratory',
+          'equipment',
+          'equipment.equipmentResources',
+          'equipment.equipmentResources.attribute',
+        ],
+      });
+    if (!laboratoryEquipment)
+      throw new NotFoundException(
+        `No se ha encontrado el laboratorio con id ${id}`,
+      );
+    return formatSummaryLaboratoryEquipmentResponse(laboratoryEquipment);
   }
 }

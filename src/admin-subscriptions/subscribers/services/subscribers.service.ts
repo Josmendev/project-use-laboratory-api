@@ -38,6 +38,10 @@ export class SubscribersService {
       this.subscriberRepository.createQueryBuilder('subscriber');
     queryBuilder
       .leftJoinAndSelect('subscriber.subscription', 'subscription')
+      .leftJoinAndSelect(
+        'subscription.subscriptionsDesigneSetting',
+        'subscriptionsDesigneSetting',
+      )
       .leftJoinAndSelect('subscription.parameters', 'parameters')
       .where('subscriber.subscriberId = :subscriberId', { subscriberId })
       .andWhere('subscription.status = :status', {
