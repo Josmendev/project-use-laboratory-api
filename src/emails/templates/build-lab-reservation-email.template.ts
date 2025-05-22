@@ -24,8 +24,8 @@ export const buildLabReservationEmail = (params: {
       background: #f8f9fa;
     ">
       <h3 style="margin: 0 0 5px 0; color: ${params.primaryColor};">${detail.labDescription}</h3>
-      <p><strong>Fecha:</strong> ${detail.date}</p>
       <p><strong>Equipo:</strong> ${detail.equipmentDescription}</p>
+      <p><strong>Fecha:</strong> ${detail.date}</p>
       <p><strong>Horario:</strong> ${detail.startTime} - ${detail.endTime}</p>
     </div>
   `,
