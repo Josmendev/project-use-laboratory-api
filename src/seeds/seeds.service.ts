@@ -109,10 +109,12 @@ export class SeedsService {
 
     /** register persons */
     await this.insertPersonType();
+    await this.insertInformationTypes();
     await this.insertRoles();
     await this.insertDocumentIdentityType();
-    await this.inserNaturalPerson();
-    await this.inserJuridicalPerson();
+    await this.insertNaturalPerson();
+    await this.insertJuridicalPerson();
+    await this.insertPersonInformation();
 
     /** register Equipment */
     await this.insertAttributeTypes();
@@ -154,6 +156,16 @@ export class SeedsService {
     return true;
   }
 
+  private async insertInformationTypes(): Promise<boolean> {
+    const insertPromises: Promise<InformationType>[] = [];
+    initialData.informationTypes.forEach((pType) => {
+      insertPromises.push(this.informationTypeRepository.save(pType));
+    });
+    await Promise.all(insertPromises);
+    console.log('InformationType insertados');
+    return true;
+  }
+
   private async insertDocumentIdentityType(): Promise<boolean> {
     const insertPromises: Promise<DocumentIdentityType>[] = [];
     initialData.documentIdentityType.forEach((dType) => {
@@ -164,7 +176,7 @@ export class SeedsService {
     return true;
   }
 
-  private async inserJuridicalPerson(): Promise<boolean> {
+  private async insertJuridicalPerson(): Promise<boolean> {
     const insertPromises: Promise<JuridicalPerson>[] = [];
 
     for (const nPersonData of initialData.juridicalPersons) {
@@ -202,7 +214,7 @@ export class SeedsService {
     return true;
   }
 
-  private async inserNaturalPerson(): Promise<boolean> {
+  private async insertNaturalPerson(): Promise<boolean> {
     const insertPromises: Promise<NaturalPerson>[] = [];
 
     for (const nPersonData of initialData.naturalPersons) {
@@ -240,35 +252,49 @@ export class SeedsService {
     return true;
   }
 
-  private async inserJuridicalPerson_(): Promise<boolean> {
-    const insertPromises: Promise<JuridicalPerson>[] = [];
-    initialData.juridicalPersons.forEach((nJuridicalData) => {
-      const promise = this.personRepository
-        .save(nJuridicalData)
-        .then((savedPerson) => {
-          nJuridicalData.person = savedPerson;
-          const naturalPerson =
-            this.juridicalPersonRepository.create(nJuridicalData);
-          return this.juridicalPersonRepository.save(naturalPerson);
+  private async insertPersonInformation(): Promise<boolean> {
+    const insertPromises: Promise<PersonInformation>[] = [];
+
+    const personList = await this.personRepository.find();
+    const informationTypeList = await this.informationTypeRepository.find();
+
+    for (const person of personList) {
+      for (const type of informationTypeList) {
+        let valueDescription = '';
+        switch (type.informationTypeId) {
+          case 'mail':
+          case 'i1n2f3o4-9012-3456-78ab-info89012345':
+            valueDescription = this.generarRandomEmail(person.documentNumber);
+            break;
+          case 'phone':
+          case 'i2n3f4o5-0123-4567-89bc-info90123456':
+            valueDescription = this.generarRandomPhone();
+            break;
+          case 'address':
+          case 'i3n4f5o6-1234-5678-90cd-info01234567':
+            valueDescription = this.generarRandomAddress();
+            break;
+          default:
+            valueDescription = 'N/A';
+        }
+
+        const personInformation = this.personInformationRepository.create({
+          personInformationId: randomUUID(),
+          person,
+          informationType: type,
+          description: valueDescription,
         });
-      insertPromises.push(promise);
-    });
+        insertPromises.push(
+          this.personInformationRepository.save(personInformation),
+        );
+      }
+    }
     await Promise.all(insertPromises);
-    console.log('JuridicalPersons insertados correctamente');
+    console.log('PersonInformation insertados correctamente');
     return true;
   }
 
   private async insertServicesType(): Promise<boolean> {
-    const insertPromises: Promise<ServicesType>[] = [];
-    initialData.serviceTypes.forEach((dType) => {
-      insertPromises.push(this.servicesTypeRepository.save(dType));
-    });
-    await Promise.all(insertPromises);
-    console.log('documentIdentityType insertados');
-    return true;
-  }
-
-  private async insertServicesTypexx(): Promise<boolean> {
     const insertPromises: Promise<ServicesType>[] = [];
     initialData.serviceTypes.forEach((dType) => {
       insertPromises.push(this.servicesTypeRepository.save(dType));
@@ -468,9 +494,6 @@ export class SeedsService {
     const person = await this.personRepository.findOneBy({
       personId: 'm5n6o7p8-1234-5678-90kl-mnop01234888',
     });
-
-    console.log(person);
-
     const service = await this.serviceRepository.find();
 
     for (const subscription of initialData.subscriptions) {
@@ -533,19 +556,6 @@ export class SeedsService {
     console.log('Subscriptions insertados correctamente');
     return true;
   }
-
-  //     for (const objService of service) {
-  //             const subscriptionDetail = this.subscriptionDetailRepository.create(
-  //               {
-  //                 subscriptionDetailId: randomUUID(),
-  //                 subscription: savedSubscription,
-  //                 service: objService,
-  //                 accountsNumber: Math.floor(Math.random() * (200 - 50 + 1)) + 50,
-  //               },
-  //             );
-  //
-  //             return this.subscriptionDetailRepository.save(subscriptionDetail);
-  //           }
 
   private async insertSubscriptionsDesigneSetting(): Promise<boolean> {
     const insertPromises: Promise<ProgrammingSubscriptionDetail>[] = [];
@@ -878,22 +888,6 @@ export class SeedsService {
         //insertPromises.push(this.subscriberRepository.save(subscriber));
       }
     }
-
-    // {
-    //   subscriberId: randomUUID(),
-    //     username: 'dddd',
-    //   password: 'adaD',
-    //   naturalPerson: subscriberObj,
-    //   subscription: subscription,
-    //   isConfirm: true,
-    //   token: 'adad',
-    //   refreshToken: 'sfdasf',
-    //   metadata: {},
-    //   isActive: true,
-    // }
-    // for (const subscriberObj of subscriberList) {
-    // }
-
     await Promise.all(insertPromises);
     console.log('Subscriber insertados correctamente');
     return true;
@@ -907,14 +901,6 @@ export class SeedsService {
       .slice(0, Math.min(maxItems, list.length))
       .map((item) => item as NaturalPerson);
   }
-
-  //
-  // private filtrarMaxItems<T>(list: T[], maxItems: number): T[] {
-  //   // Mezcla aleatoriamente la lista
-  //   const shuffled = list.sort(() => Math.random() - 0.5);
-  //   // Devuelve los primeros `maxItems` elementos
-  //   return shuffled.slice(0, Math.min(maxItems, list.length));
-  // }
 
   private async deleteAllTables(): Promise<void> {
     /** reservationt*/
@@ -1009,7 +995,7 @@ export class SeedsService {
     return `${hour.toString().padStart(2, '0')}:00`;
   }
 
-  getRandomAttributeValue(type: string): string {
+  private getRandomAttributeValue(type: string): string {
     const memoryOptions = [
       '4GB DDR4',
       '8GB DDR4',
@@ -1094,5 +1080,52 @@ export class SeedsService {
       default:
         throw new Error(`Tipo desconocido: ${type}`);
     }
+  }
+
+  private generarRandomEmail(documento: string): string {
+    const dominios = [
+      '@gmail.com',
+      '@yahoo.es',
+      '@outlook.com',
+      '@hotmail.com',
+      '@pucp.edu.pe',
+    ];
+    const dominioAleatorio =
+      dominios[Math.floor(Math.random() * dominios.length)];
+    const maxLongitud = 40;
+    const maxLongitudDocumento = maxLongitud - dominioAleatorio.length;
+    const documentoCortado = documento.slice(0, maxLongitudDocumento);
+    return `${documentoCortado}${dominioAleatorio}`;
+  }
+
+  private generarRandomPhone(): string {
+    const prefijo = '51';
+    const numeroMovil =
+      '9' + Math.floor(10000000 + Math.random() * 90000000).toString();
+    const telefono = prefijo + numeroMovil;
+    return telefono.length <= 40 ? telefono : telefono.slice(0, 40);
+  }
+
+  private generarRandomAddress(): string {
+    const tiposVia = ['Av.', 'Jr.', 'Calle', 'Psje.', 'Mz.'];
+    const nombres = [
+      'Los Olivos',
+      'San Martín',
+      'Tupac Amaru',
+      'La Molina',
+      'Arequipa',
+      'Pachacutec',
+      'Miraflores',
+      'Independencia',
+      'Larco',
+    ];
+    const numero = Math.floor(Math.random() * 9999) + 1;
+    const tipo = tiposVia[Math.floor(Math.random() * tiposVia.length)];
+    const nombre = nombres[Math.floor(Math.random() * nombres.length)];
+    let direccion = `${tipo} ${nombre} ${numero}`;
+    if (direccion.length > 40) {
+      direccion = direccion.slice(0, 40);
+    }
+    return direccion;
   }
 }
