@@ -21,6 +21,11 @@ import { Subscriber } from 'src/admin-subscriptions/subscribers/entities/subscri
 import { formatReservationResponse } from '../helpers/format-reservation-response.helper';
 import { ReservationResponse } from '../interfaces/reservation-response.interface';
 import { isValidDayOfWeek } from 'src/common/helpers/is-valid-day-of-week.helper';
+import { paginate } from 'src/common/helpers/paginate.helper';
+import { Paginated } from 'src/common/interfaces/paginated.interface';
+import { FindAllByStatusDto } from '../dto/find-all-by-status.dto';
+import { ReservationFindAllByStatusResponse } from '../interfaces/reservation-find-all-by-status.interface';
+import { findAllByStatusResponse } from '../helpers/find-all-by-status-response.helper';
 
 @Injectable()
 export class ReservationsService {
@@ -62,6 +67,30 @@ export class ReservationsService {
     });
     const reservationSaved = await this.reservationRepository.save(reservation);
     return formatReservationResponse(reservationSaved);
+  }
+
+  async findAllByStatus(
+    userId: string,
+    findAllByStatusDto: FindAllByStatusDto,
+  ): Promise<Paginated<ReservationFindAllByStatusResponse>> {
+    const { status, ...paginationDto } = findAllByStatusDto;
+    const reservations = await this.reservationRepository.find({
+      relations: [
+        'subscriber',
+        'reservationLaboratoryEquipment',
+        'reservationLaboratoryEquipment.laboratoryEquipment',
+        'reservationLaboratoryEquipment.laboratoryEquipment.laboratory',
+        'reservationLaboratoryEquipment.laboratoryEquipment.equipment',
+      ],
+      where: {
+        subscriber: { subscriberId: userId },
+        reservationLaboratoryEquipment: status ? { status } : {},
+      },
+    });
+    return await paginate(
+      reservations.map(findAllByStatusResponse),
+      paginationDto,
+    );
   }
 
   // Internal helpers methods
