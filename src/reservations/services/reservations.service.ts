@@ -20,6 +20,7 @@ import { CreateReservationDetailDto } from '../dto/create-reservation-detail.dto
 import { Subscriber } from 'src/admin-subscriptions/subscribers/entities/subscriber.entity';
 import { formatReservationResponse } from '../helpers/format-reservation-response.helper';
 import { ReservationResponse } from '../interfaces/reservation-response.interface';
+import { isValidDayOfWeek } from 'src/common/helpers/is-valid-day-of-week.helper';
 
 @Injectable()
 export class ReservationsService {
@@ -132,6 +133,7 @@ export class ReservationsService {
     user: Subscriber,
     userId: string,
   ) {
+    isValidDayOfWeek(detail.dayName, detail.date);
     await this.laboratoryEquipeService.findOneById(detail.laboratoryEquipeId);
     validateReservationHourRange(detail.initialHour, detail.finalHour, index);
     validateReservationDate(detail.date, index);

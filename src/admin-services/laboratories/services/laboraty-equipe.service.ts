@@ -15,6 +15,7 @@ import { Paginated } from '../../../common/interfaces/paginated.interface';
 import { BaseService } from 'src/common/services/base.service';
 import { ResourcesLaboratoryResponse } from '../interfaces/resources-laboratories-response.interface';
 import { formatResourcesLaboratoryEquipmentResponse } from '../helpers/format-resources-laboratories-equipemnt-response.helper';
+import { isValidDayOfWeek } from 'src/common/helpers/is-valid-day-of-week.helper';
 
 @Injectable()
 export class LaboratoryEquipeService extends BaseService<LaboratoryEquipment> {
@@ -43,6 +44,7 @@ export class LaboratoryEquipeService extends BaseService<LaboratoryEquipment> {
       searchTerm,
       ...paginationDto
     } = findAllDisponibilityListDto;
+    isValidDayOfWeek(dayOfWeek, date);
     this.isValidDate(date, initialHour);
     this.isValidReservationTime(reservationTime, maximumReservationTime);
     const finalHour = calculateFinalHour(initialHour, reservationTime);
