@@ -38,6 +38,7 @@ export class SubscribersService {
       this.subscriberRepository.createQueryBuilder('subscriber');
     queryBuilder
       .leftJoinAndSelect('subscriber.subscription', 'subscription')
+      .leftJoinAndSelect('subscription.parameters', 'parameters')
       .where('subscriber.subscriberId = :subscriberId', { subscriberId })
       .andWhere('subscription.status = :status', {
         status: StatusSubscription.ACTIVE,
@@ -91,7 +92,6 @@ export class SubscribersService {
       .leftJoinAndSelect('subscriberRoles.role', 'role')
       .where('subscriber.subscriberId = :subscriberId', { subscriberId });
     const subscriber = await queryBuilder.getOne();
-    // console.log(subscriber);
     return subscriber;
   }
 }

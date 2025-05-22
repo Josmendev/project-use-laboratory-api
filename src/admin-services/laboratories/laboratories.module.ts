@@ -1,15 +1,14 @@
 import { Module } from '@nestjs/common';
 import { LaboratoriesController } from './laboratories.controller';
-import { LaboratoriesService } from './services/laboratories.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Laboratory } from './entities/laboratory.entity';
 import { LaboratoryEquipment } from './entities/laboratory-equipment.entity';
 import { LaboratoryTechnicalSupport } from './entities/laboratory-technical-support.entity';
-import { SubscribersModule } from 'src/admin-subscriptions/subscribers/subscribers.module';
-import { AuthModule } from 'src/auth/auth.module';
+import { LaboratoriesService } from './services/laboratories.service';
 import { LaboratoryEquipeService } from './services/laboraty-equipe.service';
+import { SubscribersModule } from 'src/admin-subscriptions/subscribers/subscribers.module';
 import { ProgrammingModule } from 'src/admin-programming/programming/programming.module';
-import { ReservationsModule } from 'src/reservations/reservations.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
@@ -20,10 +19,10 @@ import { ReservationsModule } from 'src/reservations/reservations.module';
     ]),
     SubscribersModule,
     ProgrammingModule,
-    ReservationsModule,
     AuthModule,
   ],
   controllers: [LaboratoriesController],
-  providers: [LaboratoriesService, LaboratoryEquipeService],
+  providers: [LaboratoryEquipeService, LaboratoriesService],
+  exports: [LaboratoryEquipeService, LaboratoriesService],
 })
 export class LaboratoriesModule {}

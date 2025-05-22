@@ -5,8 +5,8 @@ import { ProgrammingHours } from '../entities/programming-hours.entity';
 import { Repository } from 'typeorm';
 import { ValidateHoursDisponibilityDto } from '../dto/validate-hours-disponiblity.dto';
 import { StatusProgramming } from '../enums/status-programming.enum';
-import { ReservationsService } from 'src/reservations/reservations.service';
 import { formatValidateHoursResponse } from '../helpers/formate-validate-hours-response.helper';
+import { ReservationsService } from 'src/reservations/services/reservations.service';
 
 @Injectable()
 export class ProgrammingHoursService {
