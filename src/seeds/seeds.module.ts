@@ -68,6 +68,7 @@ import { Reservation } from '../reservations/entities/reservation.entity';
       SubscriberRole,
       ReservationLaboratoryEquipment,
       Reservation,
+      PersonInformation,
     ]),
   ],
   controllers: [SeedsController],

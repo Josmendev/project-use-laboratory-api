@@ -1904,4 +1904,24 @@ export const initialData: SeedData = {
       refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ0.refresh',
     },
   ],
+  informationTypes: [
+    {
+      informationTypeId: 'i1n2f3o4-9012-3456-78ab-info89012345',
+      description: 'Email',
+      required: true,
+      isActive: true,
+    },
+    {
+      informationTypeId: 'i2n3f4o5-0123-4567-89bc-info90123456',
+      description: 'Phone Number',
+      required: true,
+      isActive: true,
+    },
+    {
+      informationTypeId: 'i3n4f5o6-1234-5678-90cd-info01234567',
+      description: 'Address',
+      required: true,
+      isActive: true,
+    },
+  ],
 };
