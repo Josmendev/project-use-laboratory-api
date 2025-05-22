@@ -32,6 +32,10 @@ import { Turn } from '../admin-services/laboratories/enums/turn.enum';
 import { SubscriptionsDesigneSetting } from '../admin-subscriptions/subscriptions-designe-settings/entities/subscriptions-designe-setting.entity';
 import { Subscriber } from '../admin-subscriptions/subscribers/entities/subscriber.entity';
 import { SubscriberRole } from '../admin-subscriptions/subscribers/entities/subscriber-role.entity';
+import { PersonInformation } from '../admin-persons/persons/entities/person-information.entity';
+import { InformationType } from 'src/admin-persons/information-type/entities/information-type.entity';
+import { ReservationLaboratoryEquipment } from '../reservations/entities/reservation-laboratory-equipment.entity';
+import { Reservation } from '../reservations/entities/reservation.entity';
 
 @Injectable()
 export class SeedsService {
@@ -90,6 +94,14 @@ export class SeedsService {
     private readonly subscriberRepository: Repository<Subscriber>,
     @InjectRepository(SubscriberRole)
     private readonly SubscriberRoleRepository: Repository<SubscriberRole>,
+    @InjectRepository(PersonInformation)
+    private readonly personInformationRepository: Repository<PersonInformation>,
+    @InjectRepository(InformationType)
+    private readonly informationTypeRepository: Repository<InformationType>,
+    @InjectRepository(ReservationLaboratoryEquipment)
+    private readonly reservationLaboratoryEquipmentRepository: Repository<ReservationLaboratoryEquipment>,
+    @InjectRepository(Reservation)
+    private readonly reservationtRepository: Repository<Reservation>,
   ) {}
 
   async runSeed(): Promise<string> {
@@ -905,6 +917,11 @@ export class SeedsService {
   // }
 
   private async deleteAllTables(): Promise<void> {
+    /** reservationt*/
+
+    await this.reservationLaboratoryEquipmentRepository.deleteAll();
+    await this.reservationtRepository.deleteAll();
+
     /** subscriber */
     await this.SubscriberRoleRepository.deleteAll();
     await this.subscriberRepository.deleteAll();
@@ -922,6 +939,7 @@ export class SeedsService {
     /** persons */
     await this.naturalPersonRepository.deleteAll();
     await this.juridicalPersonRepository.deleteAll();
+    await this.personInformationRepository.deleteAll();
     await this.personRepository.deleteAll();
     /** register Laboratories */
     await this.laboratoryTechnicalSupportRepository.deleteAll();
@@ -940,6 +958,7 @@ export class SeedsService {
     await this.subscriptionsTypeRepository.deleteAll();
     await this.roleRepository.deleteAll();
     await this.technicalSupportRepository.deleteAll();
+    await this.informationTypeRepository.deleteAll();
   }
 
   private getRandomDateHours(): { startTime: string; endTime: string }[] {

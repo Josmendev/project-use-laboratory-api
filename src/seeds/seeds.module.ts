@@ -29,12 +29,18 @@ import { LaboratoryTechnicalSupport } from '../admin-services/laboratories/entit
 import { SubscriptionsDesigneSetting } from '../admin-subscriptions/subscriptions-designe-settings/entities/subscriptions-designe-setting.entity';
 import { Subscriber } from '../admin-subscriptions/subscribers/entities/subscriber.entity';
 import { SubscriberRole } from '../admin-subscriptions/subscribers/entities/subscriber-role.entity';
+import { PersonInformation } from '../admin-persons/persons/entities/person-information.entity';
+import { InformationType } from '../admin-persons/information-type/entities/information-type.entity';
+import { ReservationLaboratoryEquipment } from '../reservations/entities/reservation-laboratory-equipment.entity';
+import { Reservation } from '../reservations/entities/reservation.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       PersonsType,
       Person,
+      PersonInformation,
+      InformationType,
       NaturalPerson,
       JuridicalPerson,
       DocumentIdentityType,
@@ -60,6 +66,8 @@ import { SubscriberRole } from '../admin-subscriptions/subscribers/entities/subs
       SubscriptionsDesigneSetting,
       Subscriber,
       SubscriberRole,
+      ReservationLaboratoryEquipment,
+      Reservation,
     ]),
   ],
   controllers: [SeedsController],
