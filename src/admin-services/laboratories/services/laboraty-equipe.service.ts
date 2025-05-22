@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LaboratoryEquipment } from '../entities/laboratory-equipment.entity';
 import { Repository } from 'typeorm';
@@ -16,6 +12,8 @@ import { BaseService } from 'src/common/services/base.service';
 import { ResourcesLaboratoryResponse } from '../interfaces/resources-laboratories-response.interface';
 import { formatResourcesLaboratoryEquipmentResponse } from '../helpers/format-resources-laboratories-equipemnt-response.helper';
 import { isValidDayOfWeek } from 'src/common/helpers/is-valid-day-of-week.helper';
+import { isValidDate } from '../helpers/is-valid-date.helper';
+import { isValidReservationTime } from '../helpers/is-valid-reservation-time.helper';
 
 @Injectable()
 export class LaboratoryEquipeService extends BaseService<LaboratoryEquipment> {
@@ -45,8 +43,8 @@ export class LaboratoryEquipeService extends BaseService<LaboratoryEquipment> {
       ...paginationDto
     } = findAllDisponibilityListDto;
     isValidDayOfWeek(dayOfWeek, date);
-    this.isValidDate(date, initialHour);
-    this.isValidReservationTime(reservationTime, maximumReservationTime);
+    isValidDate(date, initialHour);
+    isValidReservationTime(reservationTime, maximumReservationTime);
     const finalHour = calculateFinalHour(initialHour, reservationTime);
     const subscriber =
       await this.subscriberService.findOneBySubscriberId(userId);
@@ -92,27 +90,5 @@ export class LaboratoryEquipeService extends BaseService<LaboratoryEquipment> {
         `No se ha encontrado el laboratorio con id ${id}`,
       );
     return formatResourcesLaboratoryEquipmentResponse(laboratoryEquipment);
-  }
-
-  // Internal helpers methods
-  private isValidDate(date: string, initialHour: string): void {
-    const inputDateTime = new Date(`${date}T${initialHour}`);
-    const now = new Date();
-
-    if (inputDateTime < now) {
-      throw new BadRequestException(
-        'La fecha y/o la hora no pueden ser anteriores a la actual',
-      );
-    }
-  }
-
-  private isValidReservationTime(
-    reservationTime: number,
-    paramMaximumReservatuionTime: number,
-  ): void {
-    if (reservationTime > paramMaximumReservatuionTime)
-      throw new BadRequestException(
-        `El tiempo de reserva no puede ser mayor a ${paramMaximumReservatuionTime}`,
-      );
   }
 }
