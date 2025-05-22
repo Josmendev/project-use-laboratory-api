@@ -25,6 +25,13 @@ import { ProgrammingSubscriptionDetail } from '../admin-programming/programming/
 import { StatusProgramming } from '../admin-programming/programming/enums/status-programming.enum';
 import { ProgrammingDay } from '../admin-programming/programming/entities/programming-day.entity';
 import { ProgrammingHours } from '../admin-programming/programming/entities/programming-hours.entity';
+import { Role } from '../admin-subscriptions/roles/entities/role.entity';
+import { TechnicalSupport } from '../admin-services/technical-support/entities/technical-support.entity';
+import { LaboratoryTechnicalSupport } from '../admin-services/laboratories/entities/laboratory-technical-support.entity';
+import { Turn } from '../admin-services/laboratories/enums/turn.enum';
+import { SubscriptionsDesigneSetting } from '../admin-subscriptions/subscriptions-designe-settings/entities/subscriptions-designe-setting.entity';
+import { Subscriber } from '../admin-subscriptions/subscribers/entities/subscriber.entity';
+import { SubscriberRole } from '../admin-subscriptions/subscribers/entities/subscriber-role.entity';
 
 @Injectable()
 export class SeedsService {
@@ -71,6 +78,18 @@ export class SeedsService {
     private readonly programmingDayRepository: Repository<ProgrammingDay>,
     @InjectRepository(ProgrammingHours)
     private readonly programmingHoursRepository: Repository<ProgrammingHours>,
+    @InjectRepository(Role)
+    private readonly roleRepository: Repository<Role>,
+    @InjectRepository(TechnicalSupport)
+    private readonly technicalSupportRepository: Repository<TechnicalSupport>,
+    @InjectRepository(LaboratoryTechnicalSupport)
+    private readonly laboratoryTechnicalSupportRepository: Repository<LaboratoryTechnicalSupport>,
+    @InjectRepository(SubscriptionsDesigneSetting)
+    private readonly subscriptionsDesigneSettingRepository: Repository<SubscriptionsDesigneSetting>,
+    @InjectRepository(Subscriber)
+    private readonly subscriberRepository: Repository<Subscriber>,
+    @InjectRepository(SubscriberRole)
+    private readonly SubscriberRoleRepository: Repository<SubscriberRole>,
   ) {}
 
   async runSeed(): Promise<string> {
@@ -78,6 +97,7 @@ export class SeedsService {
 
     /** register persons */
     await this.insertPersonType();
+    await this.insertRoles();
     await this.insertDocumentIdentityType();
     await this.inserNaturalPerson();
     await this.inserJuridicalPerson();
@@ -92,16 +112,22 @@ export class SeedsService {
     await this.insertServicesType();
     await this.insertLaboratories();
     await this.insertLaboratoriesEquipment();
+    await this.insertTechnicalSupport();
+    await this.insertTechnicalSupportToLaboratory();
 
     /** register subscriptions */
     await this.insertSubscriptionsType();
     await this.insertSubscriptions();
+    await this.insertSubscriptionsDesigneSetting();
 
     /** register program*/
     await this.insertDays();
     await this.insertProgrammingSubscription();
     await this.insertProgrammingDays();
     await this.insertProgrammingHours();
+
+    /** register subscriber */
+    await this.insertStaticSubscriber();
 
     return 'Seed ejecutado con éxito';
   }
@@ -423,24 +449,45 @@ export class SeedsService {
   }
 
   private async insertSubscriptions(): Promise<boolean> {
-    const insertPromises: Promise<SubscriptionDetail>[] = [];
+    const insertPromises: Promise<Parameter>[] = [];
+    const subscriptionsType = await this.subscriptionsTypeRepository.find();
+    //const person = await this.personRepository.find();//de manera aleatoria
+
+    const person = await this.personRepository.findOneBy({
+      personId: 'm5n6o7p8-1234-5678-90kl-mnop01234888',
+    });
+
+    console.log(person);
+
+    const service = await this.serviceRepository.find();
 
     for (const subscription of initialData.subscriptions) {
-      const subscriptionsType = await this.subscriptionsTypeRepository.find();
       subscription.subscriptionType =
         subscriptionsType[Math.floor(Math.random() * subscriptionsType.length)];
 
-      const person = await this.personRepository.find();
-      subscription.person = person[Math.floor(Math.random() * person.length)];
-
-      const service = await this.serviceRepository.find();
-
-      const randomService = service[Math.floor(Math.random() * service.length)];
+      //subscription.person = person[Math.floor(Math.random() * person.length)];
+      if (person instanceof Person) {
+        subscription.person = person;
+      }
 
       const promise = this.subscriptionRepository
         .save(subscription)
         .then(async (savedSubscription) => {
-          const parameter = this.parameterRepository.create({
+          for (const objService of service) {
+            const subscriptionDetail = this.subscriptionDetailRepository.create(
+              {
+                subscriptionDetailId: randomUUID(),
+                subscription: savedSubscription,
+                service: objService,
+                accountsNumber: Math.floor(Math.random() * (200 - 50 + 1)) + 50,
+              },
+            );
+
+            await this.subscriptionDetailRepository.save(subscriptionDetail);
+          }
+
+          /** Add parameters **/
+          const randomParameter = this.parameterRepository.create({
             parameterId: subscription.subscriptionId,
             subscription: savedSubscription,
             description: '-',
@@ -452,15 +499,19 @@ export class SeedsService {
               Math.floor(Math.random() * (120 - 50 + 1)) + 60,
           });
 
-          await this.parameterRepository.save(parameter);
+          return this.parameterRepository.save(randomParameter);
 
-          const subscriptionDetail = this.subscriptionDetailRepository.create({
-            subscriptionDetailId: randomUUID(),
-            subscription: savedSubscription,
-            service: randomService,
-            accountsNumber: Math.floor(Math.random() * (200 - 50 + 1)) + 50,
-          });
-          return this.subscriptionDetailRepository.save(subscriptionDetail);
+          //await this.parameterRepository.save(randomParameter);
+          /** Add only randome service **/
+          // const randomService =
+          //   service[Math.floor(Math.random() * service.length)];
+          // const subscriptionDetail = this.subscriptionDetailRepository.create({
+          //   subscriptionDetailId: randomUUID(),
+          //   subscription: savedSubscription,
+          //   service: randomService,
+          //   accountsNumber: Math.floor(Math.random() * (200 - 50 + 1)) + 50,
+          // });
+          // return this.subscriptionDetailRepository.save(subscriptionDetail);
         });
 
       insertPromises.push(promise);
@@ -468,6 +519,41 @@ export class SeedsService {
 
     await Promise.all(insertPromises);
     console.log('Subscriptions insertados correctamente');
+    return true;
+  }
+
+  //     for (const objService of service) {
+  //             const subscriptionDetail = this.subscriptionDetailRepository.create(
+  //               {
+  //                 subscriptionDetailId: randomUUID(),
+  //                 subscription: savedSubscription,
+  //                 service: objService,
+  //                 accountsNumber: Math.floor(Math.random() * (200 - 50 + 1)) + 50,
+  //               },
+  //             );
+  //
+  //             return this.subscriptionDetailRepository.save(subscriptionDetail);
+  //           }
+
+  private async insertSubscriptionsDesigneSetting(): Promise<boolean> {
+    const insertPromises: Promise<ProgrammingSubscriptionDetail>[] = [];
+
+    const subscriptionList = await this.subscriptionRepository.find();
+    const designSettings = initialData.subscriptionsDesigneSettings;
+
+    for (const subscription of subscriptionList) {
+      const randomDesignSettings =
+        designSettings[Math.floor(Math.random() * designSettings.length)];
+
+      randomDesignSettings.subscription = subscription;
+      randomDesignSettings.subscribersDesigneSettingId =
+        subscription.subscriptionId;
+      await this.subscriptionsDesigneSettingRepository.save(
+        randomDesignSettings,
+      );
+    }
+    await Promise.all(insertPromises);
+    console.log('SubscriptionsDesigneSetting  insertados correctamente');
     return true;
   }
 
@@ -547,7 +633,6 @@ export class SeedsService {
         );
       }
     }
-
     await Promise.all(insertPromises);
     console.log('ProgrammingHours insertados correctamente');
     return true;
@@ -638,10 +723,196 @@ export class SeedsService {
     };
   }
 
+  private async insertRoles() {
+    const insertPromises: Promise<Role>[] = [];
+    initialData.roles.forEach((sType) => {
+      insertPromises.push(this.roleRepository.save(sType));
+    });
+    await Promise.all(insertPromises);
+    console.log('Roles insertados');
+    return true;
+  }
+
+  private async insertTechnicalSupport() {
+    const insertPromises: Promise<TechnicalSupport>[] = [];
+    initialData.technicalSupports.forEach((sType) => {
+      insertPromises.push(this.technicalSupportRepository.save(sType));
+    });
+    await Promise.all(insertPromises);
+    console.log('TechnicalSupport insertados');
+    return true;
+  }
+
+  private async insertTechnicalSupportToLaboratory(): Promise<boolean> {
+    const laboratoriesList = await this.laboratoryRepository.find();
+    const technicalSupportList = await this.technicalSupportRepository.find();
+
+    const insertPromises: Promise<LaboratoryTechnicalSupport>[] = [];
+
+    laboratoriesList.forEach((laboratory) => {
+      const randomTechnicalSupport =
+        technicalSupportList[
+          Math.floor(Math.random() * technicalSupportList.length)
+        ];
+      const technicalSupport = this.laboratoryTechnicalSupportRepository.create(
+        {
+          laboratoryTechnicalSupportId: randomUUID(),
+          laboratory,
+          technicalSupport: randomTechnicalSupport,
+          turn: Math.random() < 0.5 ? Turn.MORNING : Turn.AFTERNOON,
+        },
+      );
+      insertPromises.push(
+        this.laboratoryTechnicalSupportRepository.save(technicalSupport),
+      );
+    });
+
+    await Promise.all(insertPromises);
+    console.log('Technical Support added to the Laboratories');
+    return true;
+  }
+
+  private async insertStaticSubscriber(): Promise<boolean> {
+    const insertPromises: Promise<SubscriberRole>[] = [];
+
+    const subsCriptionPUCP = await this.subscriptionRepository.findOneBy({
+      subscriptionId: 's1t2u3v4-9012-3456-78ab-subs89012345',
+    });
+
+    if (!subsCriptionPUCP) {
+      throw new Error(`No se encontro las subscripciones`);
+    }
+
+    const naturalPeopleList = await this.naturalPersonRepository.find({
+      where: [
+        { naturalPersonId: 'h0i1j2k3-6789-0123-45fg-hijk56789012' },
+        { naturalPersonId: 'l4m5n6o7-0123-4567-89jk-lmno90123456' },
+      ],
+      relations: ['person'],
+    });
+
+    const role = await this.roleRepository.findOneBy({
+      roleId: 'r4s5t6u7-2345-6789-01de-role12345678',
+    });
+
+    if (!role) {
+      throw new Error(`No se encontro el rol`);
+    }
+
+    for (const people of naturalPeopleList) {
+      const subscriber = this.subscriberRepository.create({
+        subscriberId: randomUUID(),
+        username: people.person.documentNumber,
+        password: 'defaultPassword123',
+        naturalPerson: people,
+        subscription: subsCriptionPUCP,
+        isConfirm: true,
+        token: randomUUID(),
+        refreshToken: randomUUID(),
+        metadata: {
+          createdBy: 'SYSTEM',
+          lastModifiedBy: 'SYSTEM',
+        },
+      });
+
+      const promise = this.subscriberRepository
+        .save(subscriber)
+        .then(async (savedSubscriber) => {
+          const subscriberRole = this.SubscriberRoleRepository.create({
+            subscriberRoleId: randomUUID(),
+            subscriber: savedSubscriber,
+            role: role,
+          });
+          return this.SubscriberRoleRepository.save(subscriberRole);
+        });
+
+      insertPromises.push(promise);
+    }
+
+    await Promise.all(insertPromises);
+    console.log('StaticSubscriber insertados correctamente');
+    return true;
+  }
+
+  private async insertRandomSubscriber(): Promise<boolean> {
+    const insertPromises: Promise<Subscriber>[] = [];
+
+    const numSubscriber = Math.floor(Math.random() * 5) + 1;
+    const subscriptionList = await this.subscriptionRepository.find();
+    const naturalPersonList = await this.naturalPersonRepository.find();
+
+    for (const subscription of subscriptionList) {
+      const naturalPersonFilterList = this.filtrarMaxItems(
+        naturalPersonList,
+        numSubscriber,
+      );
+
+      for (const naturalPerson of naturalPersonFilterList) {
+        // const subscriberdd = this.subscriberRepository.create({
+        //   subscriberId: randomUUID(),
+        //   username: 'dadad',
+        //   password: 'defaultPassword123',
+        //   naturalPerson: naturalPerson,
+        //   subscription: subscription,
+        //   isConfirm: true,
+        //   token: randomUUID(),
+        //   refreshToken: randomUUID(),
+        //   metadata: {
+        //     createdBy: 'SYSTEM',
+        //     lastModifiedBy: 'SYSTEM',
+        //   },
+        //   isActive: true,
+        // });
+        //insertPromises.push(this.subscriberRepository.save(subscriber));
+      }
+    }
+
+    // {
+    //   subscriberId: randomUUID(),
+    //     username: 'dddd',
+    //   password: 'adaD',
+    //   naturalPerson: subscriberObj,
+    //   subscription: subscription,
+    //   isConfirm: true,
+    //   token: 'adad',
+    //   refreshToken: 'sfdasf',
+    //   metadata: {},
+    //   isActive: true,
+    // }
+    // for (const subscriberObj of subscriberList) {
+    // }
+
+    await Promise.all(insertPromises);
+    console.log('Subscriber insertados correctamente');
+    return true;
+  }
+
+  private filtrarMaxItems(list: any[], maxItems: number): NaturalPerson[] {
+    // Mezcla aleatoriamente la lista
+    const shuffled = list.sort(() => Math.random() - 0.5);
+    // Devuelve los primeros `maxItems` elementos y los castea a NaturalPerson
+    return shuffled
+      .slice(0, Math.min(maxItems, list.length))
+      .map((item) => item as NaturalPerson);
+  }
+
+  //
+  // private filtrarMaxItems<T>(list: T[], maxItems: number): T[] {
+  //   // Mezcla aleatoriamente la lista
+  //   const shuffled = list.sort(() => Math.random() - 0.5);
+  //   // Devuelve los primeros `maxItems` elementos
+  //   return shuffled.slice(0, Math.min(maxItems, list.length));
+  // }
+
   private async deleteAllTables(): Promise<void> {
+    /** subscriber */
+    await this.SubscriberRoleRepository.deleteAll();
+    await this.subscriberRepository.deleteAll();
+
     /**subscriptions*/
     await this.programmingHoursRepository.deleteAll();
     await this.programmingDayRepository.deleteAll();
+    await this.subscriptionsDesigneSettingRepository.deleteAll();
     await this.programmingSubscriptionDetailRepository.deleteAll();
     await this.subscriptionDetailRepository.deleteAll();
     await this.parameterRepository.deleteAll();
@@ -653,6 +924,7 @@ export class SeedsService {
     await this.juridicalPersonRepository.deleteAll();
     await this.personRepository.deleteAll();
     /** register Laboratories */
+    await this.laboratoryTechnicalSupportRepository.deleteAll();
     await this.laboratoryEquipmentRepository.deleteAll();
     await this.laboratoryRepository.deleteAll();
     await this.serviceRepository.deleteAll();
@@ -666,6 +938,8 @@ export class SeedsService {
     await this.personTypeRepository.deleteAll();
     await this.documentIdentityTypeRepository.deleteAll();
     await this.subscriptionsTypeRepository.deleteAll();
+    await this.roleRepository.deleteAll();
+    await this.technicalSupportRepository.deleteAll();
   }
 
   private getRandomDateHours(): { startTime: string; endTime: string }[] {

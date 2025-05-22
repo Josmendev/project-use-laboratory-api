@@ -23,6 +23,12 @@ import { Day } from '../admin-programming/day/entities/day.entity';
 import { ProgrammingSubscriptionDetail } from '../admin-programming/programming/entities/programming-subscription-detail.entity';
 import { ProgrammingDay } from '../admin-programming/programming/entities/programming-day.entity';
 import { ProgrammingHours } from '../admin-programming/programming/entities/programming-hours.entity';
+import { Role } from '../admin-subscriptions/roles/entities/role.entity';
+import { TechnicalSupport } from '../admin-services/technical-support/entities/technical-support.entity';
+import { LaboratoryTechnicalSupport } from '../admin-services/laboratories/entities/laboratory-technical-support.entity';
+import { SubscriptionsDesigneSetting } from '../admin-subscriptions/subscriptions-designe-settings/entities/subscriptions-designe-setting.entity';
+import { Subscriber } from '../admin-subscriptions/subscribers/entities/subscriber.entity';
+import { SubscriberRole } from '../admin-subscriptions/subscribers/entities/subscriber-role.entity';
 
 @Module({
   imports: [
@@ -48,6 +54,12 @@ import { ProgrammingHours } from '../admin-programming/programming/entities/prog
       ProgrammingSubscriptionDetail,
       ProgrammingDay,
       ProgrammingHours,
+      Role,
+      TechnicalSupport,
+      LaboratoryTechnicalSupport,
+      SubscriptionsDesigneSetting,
+      Subscriber,
+      SubscriberRole,
     ]),
   ],
   controllers: [SeedsController],

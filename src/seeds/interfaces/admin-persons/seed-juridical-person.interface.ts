@@ -3,7 +3,7 @@ import {PersonsType} from "../../../admin-persons/persons-type/entities/persons-
 import {DocumentIdentityType} from "../../../admin-persons/document-identity-type/entities/document-identity-type.entity";
 
 export interface SeedJuridicalPerson {
-  idPerson: string;
+  personId: string;
   documentNumber: string;
   juridicalPersonId: string;
   legalName: string;

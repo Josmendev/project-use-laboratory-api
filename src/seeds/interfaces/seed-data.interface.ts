@@ -10,6 +10,10 @@ import { SeedEquipment } from './admin-services/seed-equipment.interface';
 import { SeedLaboratory } from './admin-services/seed-laboratory.interface';
 import { SeedSubscriptionType } from './admin-subscriptions/seed-subscription-type.interface';
 import { SeedSubscription } from './admin-subscriptions/seed-subscription.interface';
+import { SeedRole } from './admin-subscriptions/seed-role.interface';
+import { SeedTechnicalSupport } from './admin-services/seed-technical-support';
+import { SeedSubscriptionsDesigneSetting } from './admin-subscriptions/seed-subscriptions-designe-setting';
+import { SeedSubscriber} from './admin-subscriptions/seed-subscriber.interface';
 
 export interface SeedData {
   personTypes: SeedPersonType[];
@@ -24,4 +28,8 @@ export interface SeedData {
   equipments: SeedEquipment[];
   laboratories: SeedLaboratory[];
   subscriptions: SeedSubscription[];
+  roles: SeedRole[];
+  technicalSupports: SeedTechnicalSupport[];
+  subscriptionsDesigneSettings: SeedSubscriptionsDesigneSetting[];
+  subscriber: SeedSubscriber[];
 }
