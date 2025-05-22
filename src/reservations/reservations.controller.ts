@@ -32,4 +32,12 @@ export class ReservationsController {
       findAllByStatusDto,
     );
   }
+
+  @Get('detail-equipment/:id')
+  findOneByIdEquipmentWithReservation(
+    @GetUser() user: ValidateUserResponseDto,
+    @Query('id') id: string,
+  ) {
+    return this.reservationsService.findOneByIdEquipmentWithReservation(id);
+  }
 }

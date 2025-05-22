@@ -36,6 +36,8 @@ export class ReservationsService {
     private readonly laboratoryEquipeService: LaboratoryEquipeService,
     @Inject(forwardRef(() => ProgrammingHoursService))
     private readonly programmingHoursService: ProgrammingHoursService,
+    @Inject(forwardRef(() => LaboratoryEquipeService))
+    private readonly laboratyEquipeService: LaboratoryEquipeService,
     private readonly subscriberService: SubscribersService,
     private readonly reservationLaboratoryEquipmentService: ReservationLaboratoryEquipmentService,
   ) {}
@@ -91,6 +93,10 @@ export class ReservationsService {
       reservations.map(findAllByStatusResponse),
       paginationDto,
     );
+  }
+
+  async findOneByIdEquipmentWithReservation(id: string) {
+    return await this.laboratoryEquipeService.findOneById(id);
   }
 
   // Internal helpers methods
