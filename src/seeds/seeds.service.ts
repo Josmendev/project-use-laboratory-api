@@ -949,7 +949,7 @@ export class SeedsService {
 
   private getRandomDateHours(): { startTime: string; endTime: string }[] {
     // horario comun
-    const startHour = 7;
+    const startHour = 1;
     const endHour = 23;
     const programmingCount = Math.random() < 0.5 ? 1 : 2; // al azar 1 o 2 , 1 programa de 8 , 2 dos programas de  4horas
 
