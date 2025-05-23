@@ -2,7 +2,7 @@ export class ParameterResponseDto {
   parameterId: string;
   description: string;
   numberReservationDays: number;
-  miniumNumberMinutes: number;
-  rangeBeetweenReservations: number;
+  maxiumNumberMinutes: number;
+  rangeBetweenReservations: number;
   reservationTime: string[];
 }

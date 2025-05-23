@@ -4,6 +4,7 @@ import { NaturalPersonResponseDto } from 'src/admin-persons/natural-persons/dto/
 import { ParameterResponseDto } from 'src/admin-subscriptions/parameters/dto/parameter-response.dto';
 import { generateTimeSlots } from 'src/admin-subscriptions/parameters/helpers/generate-time-slots.helper';
 import { SubscriptionsDesigneSettingsResponseDto } from 'src/admin-subscriptions/subscriptions-designe-settings/dto/subscriptions-designe-settings-response.dto';
+import { PersonSubscriptionResponseDto } from 'src/admin-persons/persons/dto/person-subscription-response.dto';
 
 export const formatValidateUserResponse = (
   subscriber: Subscriber | null,
@@ -40,9 +41,9 @@ export const formatValidateUserResponse = (
     description: subscriber.subscription?.parameters?.description,
     numberReservationDays:
       subscriber.subscription?.parameters?.numberReservationDay,
-    miniumNumberMinutes:
+    maxiumNumberMinutes:
       subscriber.subscription?.parameters?.miniumNumberMinutes,
-    rangeBeetweenReservations:
+    rangeBetweenReservations:
       subscriber.subscription?.parameters?.rangeBetweenReservations,
     reservationTime: generateTimeSlots(
       subscriber.subscription?.parameters?.miniumNumberMinutes,
@@ -73,7 +74,7 @@ export const formatValidateUserResponse = (
 
   // 4. Persona de la SUSCRIPCIÓN (condicional según joins)
   const subscriptionPerson = subscriber.subscription?.person;
-  const subscriptionPersonResponse = {
+  const subscriptionPersonResponse: PersonSubscriptionResponseDto = {
     personId: subscriptionPerson?.personId,
     // Datos específicos según el tipo
     ...(subscriptionPerson?.naturalPerson
@@ -87,9 +88,9 @@ export const formatValidateUserResponse = (
         }
       : subscriptionPerson?.juridicalPerson
         ? {
-            fullname: subscriptionPerson.juridicalPerson.comercialName,
+            fullName: subscriptionPerson.juridicalPerson.comercialName,
           }
-        : { type: 'unknown' }),
+        : { fullName: 'unknown' }),
   };
 
   // 5. Construcción final

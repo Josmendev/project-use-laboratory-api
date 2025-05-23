@@ -8,6 +8,14 @@ import { AttributesTypeModule } from './attributes-type/attributes-type.module';
 import { TechnicalSupportModule } from './technical-support/technical-support.module';
 
 @Module({
-  imports: [ServicesModule, ServicesTypeModule, LaboratoriesModule, EquipmentModule, AttributesModule, AttributesTypeModule, TechnicalSupportModule]
+  imports: [
+    LaboratoriesModule,
+    ServicesModule,
+    ServicesTypeModule,
+    EquipmentModule,
+    AttributesModule,
+    AttributesTypeModule,
+    TechnicalSupportModule,
+  ],
 })
 export class AdminServicesModule {}
