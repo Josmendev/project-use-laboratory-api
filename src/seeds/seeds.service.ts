@@ -814,7 +814,7 @@ export class SeedsService {
     });
 
     const role = await this.roleRepository.findOneBy({
-      roleId: 'r4s5t6u7-2345-6789-01de-role12345678',
+      roleId: 'r1s2tBg0-7777-3456-78ab-role89012345',
     });
 
     if (!role) {

@@ -1568,6 +1568,11 @@ export const initialData: SeedData = {
   ],
   roles: [
     {
+      roleId: 'r1s2tBg0-7777-3456-78ab-role89012345',
+      description: 'CLIENTE',
+      isActive: true,
+    },
+    {
       roleId: 'r1s2tBg0-9012-3456-78ab-role89012345',
       description: 'Super Administrator',
       isActive: true,
