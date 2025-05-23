@@ -1023,37 +1023,37 @@ export const initialData: SeedData = {
   days: [
     {
       dayId: 'a1b2c3d4-1234-5678-90ab-cdef01234567',
-      description: 'Monday',
+      description: 'Lunes',
       isActive: true,
     },
     {
       dayId: 'b2c3d4e5-2345-6789-01bc-defg12345678',
-      description: 'Tuesday',
+      description: 'Martes',
       isActive: true,
     },
     {
       dayId: 'c3d4e5f6-3456-7890-12cd-efgh23456789',
-      description: 'Wednesday',
+      description: 'Miercoles',
       isActive: true,
     },
     {
       dayId: 'd4e5f6g7-4567-8901-23de-fghi34567890',
-      description: 'Thursday',
+      description: 'Jueves',
       isActive: true,
     },
     {
       dayId: 'e5f6g7h8-5678-9012-34ef-ghij45678901',
-      description: 'Friday',
+      description: 'Viernes',
       isActive: true,
     },
     {
       dayId: 'f6g7h8i9-6789-0123-45fg-hijk56789012',
-      description: 'Saturday',
+      description: 'Sabado',
       isActive: true,
     },
     {
       dayId: 'g7h8i9j0-7890-1234-56gh-ijkl67890123',
-      description: 'Sunday',
+      description: 'Domingo',
       isActive: true,
     },
   ],
